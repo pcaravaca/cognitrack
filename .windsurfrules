@@ -1,0 +1,55 @@
+
+# CogniTrack
+
+Esta aplicacion esta diseñada para monitorear y configurar servidores Ollama locales o remotos.
+Esta aplicacion esta diseñada para correr en un entorno local o en un servidor remoto y debe ser multiplataforma. Windows, Linux y MacOS.
+Trabajaremos con el servidor Ollama de pruebas 10.10.1.131:11434.
+La aplicacion debe ser configurable para que el usuario pueda configurar el servidor remotos o locales.
+La aplicacion debe tener un Landing page Moderno Y Responsive.
+La aplicacion debe tener un Dashboard Moderno Y Responsive con graficos y tablas que nos den los siguentes datos:
+Usaremos el servidor Linux 10.10.0.210 para pruebas.Es decir instalaremos la aplicacion en el servidor Linux 192.168.0.105. Siempre conectate a este sevidor con ssh. Y con el usuario: peter y la contraseña: S@pr1ssa
+Usaremos el Servidor de base de datos SQL SERVER 10.10.1.21 con las credenciales: usuario: sa y contraseña: S@pr1ssa y la base de datos CogniTrack.
+
+- Cpu Usage
+- Memory Usage
+- Models
+- Containers
+- GPU Usage
+- Power Usage and Consumption
+
+La aplicion debe ser bilingue, español y en ingles.
+
+## Desarrollo
+
+### Configuración del Entorno
+
+```bash
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
+pip install -r backend/requirements.txt
+```
+
+### Ejecutar Pruebas
+
+```bash
+pytest tests/
+```
+
+
+### Ejecutar la Aplicación
+
+```bash
+python backend/main.py
+```
+
+## Proceso de Revisión
+
+- Todos los PRs requieren revisión
+- Asegúrate de que las pruebas pasen
+- Mantén el código limpio y documentado
+
+## Documentación
+
+- Documentación de la API
+- Documentación de la aplicación
+- Manual de usuario o seccion de ayuda en la app.

@@ -1,0 +1,23 @@
+services:
+  # Servicio de frontend para desarrollo
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_BASE_URL=/api
+      - BROWSER=none
+      - VITE_OPEN_BROWSER=false
+    command: sh -c "pnpm install && node --no-warnings=ExperimentalWarning node_modules/vite/bin/vite.js --host 0.0.0.0 --port 5173 --strictPort --open false"
+    networks:
+      - cognitrack-network
+
+networks:
+  cognitrack-network:
+    driver: bridge

@@ -1,0 +1,83 @@
+// Variables globales
+:root {
+  --primary-color: #1976d2;
+  --secondary-color: #424242;
+  --accent-color: #82b1ff;
+  --error-color: #ff5252;
+  --info-color: #2196f3;
+  --success-color: #4caf50;
+  --warning-color: #ffc107;
+}
+
+// Estilos de reset y normalización
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+// Estilos base de la aplicación
+html {
+  font-size: 16px;
+  height: 100%;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: rgba(0, 0, 0, 0.87);
+  line-height: 1.5;
+  background-color: #f5f5f5;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+// Estilos para enlaces
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Clases de utilidad
+.text-center {
+  text-align: center;
+}
+
+.mt-4 {
+  margin-top: 1.5rem;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+// Ajustes para Vuetify
+.v-application {
+  font-family: 'Roboto', sans-serif;
+}
+
+// Estilos para el contenedor principal
+.main-container {
+  padding: 1.5rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// Transiciones
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}

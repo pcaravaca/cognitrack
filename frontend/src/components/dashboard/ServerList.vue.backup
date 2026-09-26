@@ -1,0 +1,662 @@
+<template>
+  <div class="server-list">
+    <!-- Barra de acciones -->
+    <v-row class="mb-6">
+      <v-col cols="12" class="d-flex justify-space-between align-center">
+        <div>
+          <h2 class="text-h4 font-weight-bold text-primary">Servidores Ollama</h2>
+          <p class="text-body-1 text-medium-emphasis mt-1">Gestiona y monitorea tus servidores Ollama</p>
+        </div>
+        <div class="d-flex">
+          <v-btn
+            color="primary"
+            variant="outlined"
+            prepend-icon="mdi-magnify-scan"
+            @click="discoverServers"
+            :loading="isDiscovering"
+            class="mr-2"
+            elevation="1"
+          >
+            <template v-slot:prepend>
+              <v-icon :color="isDiscovering ? 'primary' : 'white'"></v-icon>
+            </template>
+            Descubrir Servidores
+          </v-btn>
+          <v-btn 
+            color="primary" 
+            prepend-icon="mdi-plus" 
+            @click="openAddDialog"
+            elevation="1"
+          >
+            Agregar Servidor
+          </v-btn>
+        </div>
+      </v-col>
+    </v-row>
+
+    <!-- Mensaje de estado -->
+    <v-alert
+      v-if="discoveryStatus"
+      :type="discoveryStatus.type"
+      :title="discoveryStatus.title"
+      :text="discoveryStatus.message"
+      class="mb-4"
+      closable
+      @click:close="discoveryStatus = null"
+    />
+
+    <!-- Debug info -->
+    <v-alert v-if="servers.length === 0" type="info" class="mb-4">
+      No hay servidores disponibles. Por favor, agrega un servidor manualmente o utiliza la función de descubrimiento.
+      <div class="mt-2">
+        <v-btn color="primary" size="small" @click="discoverServers" :loading="isDiscovering" class="mr-2">
+          <v-icon left>mdi-magnify-scan</v-icon>
+          Descubrir servidores
+        </v-btn>
+        <v-btn color="secondary" size="small" @click="openAddDialog">
+          <v-icon left>mdi-plus</v-icon>
+          Agregar servidor
+        </v-btn>
+      </div>
+    </v-alert>
+
+    <!-- Lista de servidores -->
+    <v-row v-if="servers.length > 0" class="servers-grid">
+      <v-col 
+        v-for="server in servers" 
+        :key="server.id"
+        cols="12"
+        sm="6"
+        md="4"
+        lg="3"
+      >
+        <v-hover v-slot="{ isHovering, props: hoverProps }">
+          <v-card
+            v-bind="hoverProps"
+            :class="['server-card', { 'elevation-8': isHovering }]"
+            :color="getServerCardColor(server)"
+            :dark="isServerActive(server)"
+            class="h-100 d-flex flex-column transition-swing"
+            :elevation="isHovering ? 8 : 2"
+            @click="navigateToServer(server)"
+          >
+            <v-card-text class="flex-grow-1">
+              <div class="d-flex justify-space-between align-start">
+                <div class="flex-grow-1">
+                  <div class="d-flex align-center mb-3">
+                    <v-avatar
+                      :color="isServerActive(server) ? 'white' : 'grey-lighten-2'"
+                      size="40"
+                      class="mr-3"
+                    >
+                      <v-icon :color="isServerActive(server) ? 'primary' : 'grey-darken-1'">
+                        mdi-server
+                      </v-icon>
+                    </v-avatar>
+                    <div class="d-flex flex-column">
+                      <h3 class="text-h6 font-weight-bold d-flex align-center">
+                        {{ server.name }}
+                        <v-chip
+                          v-if="server.isDefault"
+                          size="x-small"
+                          color="white"
+                          text-color="primary"
+                          class="ml-2"
+                          density="compact"
+                        >
+                          Predeterminado
+                        </v-chip>
+                      </h3>
+                      <div class="d-flex align-center">
+                        <v-chip
+                          size="x-small"
+                          :color="isServerActive(server) ? 'white' : 'grey-lighten-1'"
+                          :text-color="isServerActive(server) ? 'primary' : 'white'"
+                          class="mr-2"
+                          density="comfortable"
+                          :variant="isServerActive(server) ? 'elevated' : 'flat'"
+                        >
+                          {{ isServerActive(server) ? 'En línea' : 'Sin verificar' }}
+                        </v-chip>
+                        <v-tooltip location="bottom">
+                          <template v-slot:activator="{ props: tooltipProps }">
+                            <span v-bind="tooltipProps" class="text-caption text-medium-emphasis">
+                              {{ formatDate(server.updatedAt) }}
+                            </span>
+                          </template>
+                          <span>Última actualización</span>
+                        </v-tooltip>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <v-divider class="my-3"></v-divider>
+                  
+                  <div class="server-details">
+                    <div class="d-flex align-center mb-2">
+                      <v-icon small class="mr-2" :color="isServerActive(server) ? 'white' : 'grey-lighten-1'">mdi-link</v-icon>
+                      <span class="text-body-2">{{ server.ip }}{{ server.port ? `:${server.port}` : '' }}</span>
+                    </div>
+                    
+                    <div v-if="server.description" class="d-flex align-start mb-2">
+                      <v-icon small class="mr-2 mt-1" :color="isServerActive(server) ? 'white' : 'grey-lighten-1'">mdi-text</v-icon>
+                      <span class="text-caption">{{ server.description }}</span>
+                    </div>
+                    
+                    <div class="d-flex align-center">
+                      <v-icon small class="mr-2" :color="isServerActive(server) ? 'white' : 'grey-lighten-1'">mdi-memory</v-icon>
+                      <v-progress-linear
+                        :model-value="server.cpu || 0"
+                        :color="getCpuColor(server.cpu || 0)"
+                        height="8"
+                        rounded
+                        class="flex-grow-1"
+                      ></v-progress-linear>
+                      <span class="ml-2 text-caption">{{ server.cpu || 0 }}%</span>
+                    </div>
+                    
+                    <div class="d-flex align-center mt-2">
+                      <v-icon small class="mr-2" :color="isServerActive(server) ? 'white' : 'grey-lighten-1'">mdi-memory</v-icon>
+                      <v-progress-linear
+                        :model-value="server.memory || 0"
+                        :color="getMemoryColor(server.memory || 0)"
+                        height="8"
+                        rounded
+                        class="flex-grow-1"
+                      ></v-progress-linear>
+                      <span class="ml-2 text-caption">{{ server.memory || 0 }}%</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <v-menu>
+                  <template v-slot:activator="{ props: menuProps }">
+                    <v-btn
+                      icon
+                      v-bind="menuProps"
+                      variant="text"
+                      @click.stop
+                      :color="isServerActive(server) ? 'white' : 'grey-darken-1'"
+                      size="small"
+                    >
+                      <v-icon>mdi-dots-vertical</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list density="compact" nav>
+                    <v-list-item 
+                      @click.stop="navigateToServer(server)"
+                      :to="`/server/${server.id}`"
+                    >
+                      <template v-slot:prepend>
+                        <v-icon>mdi-information</v-icon>
+                      </template>
+                      <v-list-item-title>Ver detalles</v-list-item-title>
+                    </v-list-item>
+                    
+                    <v-list-item @click.stop="editServer(server)">
+                      <template v-slot:prepend>
+                        <v-icon>mdi-pencil</v-icon>
+                      </template>
+                      <v-list-item-title>Editar</v-list-item-title>
+                    </v-list-item>
+                    
+                    <v-list-item 
+                      @click.stop="setAsDefault(server.id)" 
+                      v-if="!server.isDefault"
+                    >
+                      <template v-slot:prepend>
+                        <v-icon>mdi-star</v-icon>
+                      </template>
+                      <v-list-item-title>Establecer como predeterminado</v-list-item-title>
+                    </v-list-item>
+                    
+                    <v-divider class="my-1"></v-divider>
+                    
+                    <v-list-item 
+                      @click.stop="confirmDelete(server)" 
+                      class="text-error"
+                    >
+                      <template v-slot:prepend>
+                        <v-icon color="error">mdi-delete</v-icon>
+                      </template>
+                      <v-list-item-title class="text-error">Eliminar</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </div>
+            </v-card-text>
+            
+            <v-card-actions class="px-4 pb-3 pt-0">
+              <v-spacer></v-spacer>
+              <v-btn
+                variant="text"
+                :to="`/server/${server.id}`"
+                @click.stop
+                size="small"
+                :color="isServerActive(server) ? 'white' : 'primary'"
+                class="text-none"
+              >
+                Ver detalles
+                <v-icon end>mdi-arrow-right</v-icon>
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-hover>
+      </v-col>
+    </v-row>
+
+    <!-- Estado vacío -->
+    <v-row v-else>
+      <v-col cols="12" class="text-center">
+        <v-alert type="info" variant="tonal">
+          <template v-slot:title>
+            <div class="d-flex align-center justify-center">
+              <v-icon class="me-2">mdi-information</v-icon>
+              No hay servidores configurados
+            </div>
+          </template>
+          <p>No se encontraron servidores Ollama activos. Puede agregar un servidor manualmente o intentar descubrirlos automáticamente.</p>
+          <v-btn
+            color="primary"
+            variant="tonal"
+            class="mt-3"
+            @click="openAddDialog"
+          >
+            <v-icon start>mdi-plus</v-icon>
+            Agregar servidor
+          </v-btn>
+        </v-alert>
+      </v-col>
+    </v-row>
+
+    <!-- Diálogo para agregar/editar servidor -->
+    <v-dialog v-model="showDialog" max-width="600px" persistent>
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">{{ editingServer ? 'Editar Servidor' : 'Nuevo Servidor' }}</span>
+        </v-card-title>
+        <v-card-text>
+          <v-form ref="form" v-model="isFormValid" @submit.prevent="saveServer">
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="formData.name"
+                    label="Nombre del servidor"
+                    :rules="[v => !!v || 'El nombre es requerido']"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="formData.ip"
+                    label="Dirección IP o hostname"
+                    :rules="[v => !!v || 'La dirección IP es requerida']"
+                    required
+                    placeholder="Ej: 192.168.1.100"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <v-text-field
+                    v-model.number="formData.port"
+                    label="Puerto"
+                    type="number"
+                    :rules="[v => (v >= 1 && v <= 65535) || 'Puerto inválido']"
+                    required
+                    placeholder="11434"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-textarea
+                    v-model="formData.description"
+                    label="Descripción (opcional)"
+                    rows="2"
+                  ></v-textarea>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <v-checkbox
+                    v-model="formData.isDefault"
+                    label="Establecer como servidor predeterminado"
+                    hide-details
+                  ></v-checkbox>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="error" variant="text" @click="closeDialog">
+            Cancelar
+          </v-btn>
+          <v-btn
+            color="primary"
+            :loading="isSaving"
+            @click="saveServer"
+            :disabled="!isFormValid"
+          >
+            {{ editingServer ? 'Guardar Cambios' : 'Agregar Servidor' }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    
+    <!-- Diálogo para confirmar eliminación -->
+    <v-dialog v-model="showDeleteDialog" max-width="500px">
+      <v-card>
+        <v-card-title class="text-h6">¿Eliminar servidor?</v-card-title>
+        <v-card-text>
+          ¿Estás seguro de que deseas eliminar el servidor <strong>{{ serverToDelete?.name }}</strong>?
+          Esta acción no se puede deshacer.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" variant="text" @click="showDeleteDialog = false">Cancelar</v-btn>
+          <v-btn color="error" @click="deleteServer" :loading="isDeleting">
+            <v-icon left>mdi-delete</v-icon>
+            Eliminar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useServersStore } from '@/stores/servers'
+import type { Server } from '@/types/server'
+
+interface DiscoveryStatus {
+  type: 'info' | 'success' | 'warning' | 'error'
+  title: string
+  message: string
+}
+
+// Router
+const router = useRouter()
+
+// Stores
+const serversStore = useServersStore()
+
+// State
+const isDiscovering = ref(false)
+const discoveryStatus = ref<DiscoveryStatus | null>(null)
+const showDialog = ref(false)
+// Estado
+const isEditing = ref(false)
+const isSaving = ref(false)
+const isDeleting = ref(false)
+const showDeleteDialog = ref(false)
+const serverToDelete = ref<Server | null>(null)
+const editingServer = ref<Server | null>(null)
+const formData = ref<Partial<Server>>({
+  name: '',
+  ip: '',
+  port: 11434,
+  description: '',
+  isDefault: false
+})
+
+// Computed
+const servers = computed(() => {
+  console.log('🔍 Computed servers:', serversStore.servers)
+  return serversStore.servers
+})
+
+const currentServer = computed(() => serversStore.currentServer)
+const isServerActive = (server: Server) => server.status === 'online'
+const isFormValid = computed(() => {
+  return Boolean(formData.value.name && formData.value.ip)
+})
+
+// Debug
+console.log('🔄 Renderizando ServerList...')
+console.log('📊 Número de servidores:', servers.value.length)
+console.log('📦 Estado de servidores:', servers.value)
+</script>
+// Métodos
+const openAddDialog = () => {
+  editingServer.value = null
+  formData.value = {
+    name: '',
+    ip: '',
+    port: 11434,
+    description: '',
+    isDefault: servers.value.length === 0 // Marcar como predeterminado si es el primer servidor
+  }
+  showDialog.value = true
+}
+
+const editServer = (server: Server) => {
+  editingServer.value = server
+  formData.value = {
+    name: server.name,
+    ip: server.ip,
+    port: server.port || 11434,
+    description: server.description || '',
+    isDefault: server.isDefault || false
+  }
+  showDialog.value = true
+}
+
+const closeDialog = () => {
+  showDialog.value = false
+  editingServer.value = null
+}
+
+const saveServer = async () => {
+  if (!isFormValid.value) return
+  
+  try {
+    isSaving.value = true
+    
+    const serverData = {
+      id: editingServer.value?.id,
+      name: formData.value.name,
+      ip: formData.value.ip,
+      port: formData.value.port,
+      description: formData.value.description,
+      isDefault: formData.value.isDefault
+    }
+    
+    await serversStore.saveServer(serverData)
+    closeDialog()
+    
+    // Mostrar mensaje de éxito
+    discoveryStatus.value = {
+      type: 'success',
+      title: '¡Éxito!',
+      message: editingServer.value ? 'Servidor actualizado correctamente' : 'Servidor agregado correctamente'
+    }
+    
+  } catch (error) {
+    console.error('Error al guardar servidor:', error)
+    discoveryStatus.value = {
+      type: 'error',
+      title: 'Error',
+      message: error instanceof Error ? error.message : 'Ocurrió un error al guardar el servidor'
+    }
+  } finally {
+    isSaving.value = false
+  }
+}
+
+const confirmDelete = (server: Server) => {
+  serverToDelete.value = server
+  showDeleteDialog.value = true
+}
+
+const deleteServer = async () => {
+  if (!serverToDelete.value) return
+  
+  try {
+    isDeleting.value = true
+    await serversStore.removeServer(serverToDelete.value.id)
+    
+    // Mostrar mensaje de éxito
+    discoveryStatus.value = {
+      type: 'success',
+      title: '¡Eliminado!',
+      message: 'El servidor ha sido eliminado correctamente'
+    }
+    
+  } catch (error) {
+    console.error('Error al eliminar servidor:', error)
+    discoveryStatus.value = {
+      type: 'error',
+      title: 'Error',
+      message: 'No se pudo eliminar el servidor'
+    }
+  } finally {
+    isDeleting.value = false
+    showDeleteDialog.value = false
+    serverToDelete.value = null
+  }
+}
+
+const setAsDefault = async (serverId: number) => {
+  try {
+    const server = servers.value.find(s => s.id === serverId)
+    if (server) {
+      await serversStore.saveServer({ ...server, isDefault: true })
+      
+      // Mostrar mensaje de éxito
+      discoveryStatus.value = {
+        type: 'success',
+        title: '¡Hecho!',
+        message: 'Servidor predeterminado actualizado'
+      }
+    }
+  } catch (error) {
+    console.error('Error al establecer servidor predeterminado:', error)
+    discoveryStatus.value = {
+      type: 'error',
+      title: 'Error',
+      message: 'No se pudo actualizar el servidor predeterminado'
+    }
+  }
+}
+
+const navigateToServer = (server: Server) => {
+  router.push(`/server/${server.id}`)
+}
+
+const discoverServers = async () => {
+  try {
+    isDiscovering.value = true
+    discoveryStatus.value = {
+      type: 'info',
+      title: 'Buscando servidores...',
+      message: 'Escaneando la red en busca de servidores Ollama'
+    }
+    
+    const discoveredServers = await serversStore.discoverServers()
+    
+    if (discoveredServers.length > 0) {
+      discoveryStatus.value = {
+        type: 'success',
+        title: '¡Servidores encontrados!',
+        message: `Se encontraron ${discoveredServers.length} servidor(es) Ollama en la red`
+      }
+    } else {
+      discoveryStatus.value = {
+        type: 'info',
+        title: 'No se encontraron servidores',
+        message: 'No se detectaron servidores Ollama en la red local. Intente agregar un servidor manualmente.'
+      }
+    }
+  } catch (error) {
+    console.error('Error al descubrir servidores:', error)
+    discoveryStatus.value = {
+      type: 'error',
+      title: 'Error',
+      message: 'Ocurrió un error al buscar servidores en la red'
+    }
+  } finally {
+    isDiscovering.value = false
+  }
+}
+
+const getServerCardColor = (server: Server) => {
+  return isServerActive(server) ? 'primary' : 'grey-lighten-4'
+}
+
+const getCpuColor = (usage: number) => {
+    if (usage < 50) return 'success'
+    if (usage < 80) return 'warning'
+    return 'error'
+  }
+
+const getMemoryColor = (usage: number) => {
+  if (usage < 50) return 'success'
+  if (usage < 80) return 'warning'
+  return 'error'
+}
+
+const formatDate = (dateString?: string) => {
+  if (!dateString) return 'Nunca'
+  
+  try {
+    const date = new Date(dateString)
+    return date.toLocaleString()
+  } catch (error) {
+    return 'Fecha inválida'
+  }
+}
+
+// Inicialización
+onMounted(() => {
+  // Cargar servidores si no hay ninguno
+  if (servers.value.length === 0) {
+    serversStore.initializeServers()
+  }
+})
+</script>
+
+<style scoped>
+.server-list {
+  width: 100%;
+  
+  .servers-grid {
+    transition: all 0.3s ease;
+  }
+  
+  .server-card {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .v-card-text {
+      padding: 16px;
+    }
+    
+    .server-details {
+      margin-top: 8px;
+      padding: 8px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+    }
+  }
+  
+  .v-card--variant-elevated {
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1), 
+                0 4px 5px 0 rgba(0, 0, 0, 0.08), 
+                0 1px 10px 0 rgba(0, 0, 0, 0.06) !important;
+  }
+}
+
+.server-card.v-card--variant-outlined {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.server-card.v-theme--dark.v-card--variant-outlined {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+</style>

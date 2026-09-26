@@ -1,0 +1,23 @@
+CogniTrack Deployment Status (Multi-App)
+=======================================
+
+Deployment Date: $(Get-Date)
+Status: Active
+Version: 2.0.0
+Mode: Multi-App (coexistiendo con IPCheck-Go)
+
+🌐 Domain Configuration:
+- CogniTrack: http://cognitrack.local (puerto 80 → 8080)
+- IPCheck-Go: http://ipcheck-go.local (puerto 80 → 80)
+
+⚙️ Services:
+- CogniTrack Frontend: http://10.10.1.185:8080 (Nginx interno)
+- CogniTrack Backend: http://10.10.1.185:8082/api (Go backend)
+- CogniTrack Status: http://cognitrack.local/status.txt
+
+🔧 IPCheck-Go Services (preservados):
+- Frontend: http://ipcheck-go.local (puerto 80)
+- Backend: http://10.10.1.185:9080 (puerto 9080)
+- Database: PostgreSQL + Redis (puertos internos)
+
+✅ Health Check: Ambas aplicaciones operativas simultáneamente

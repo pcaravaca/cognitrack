@@ -1,0 +1,450 @@
+@use 'vuetify/settings' as *;
+@use './settings' as *;
+
+// Resto del contenido...// Archivo principal de estilos - Versión limpia
+// Todas las importaciones y usos deben ir al principio
+@use 'vuetify/settings' as *;
+@use './settings' as *;
+@use './global' as *;
+
+// Variables de tema
+:root {
+  --color-background: #121212;
+  --color-surface: #1E1E1E;
+  --color-surface-variant: #2D2D2D;
+  --color-on-surface: #E0E0E0;
+  --color-primary: #7FB3D5;
+  --color-primary-darken: #5D8FB8;
+  --color-secondary: #A0A0A0;
+  --color-error: #CF6679;
+  --color-info: #75C7FB;
+  --color-success: #81C784;
+  --color-warning: #FFB74D;
+  --border-color: rgba(255, 255, 255, 0.12);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+// Estilos base
+body {
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: 'Roboto', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+// Clases de utilidad
+.v-application {
+  background-color: var(--color-background) !important;
+  color: var(--color-on-surface) !important;
+}
+
+// Asegurar que los contenedores tengan un fondo
+.v-main {
+  background-color: var(--color-background);
+}
+
+// Estilos para tarjetas
+.v-card {
+  background-color: var(--color-surface) !important;
+  color: var(--color-on-surface) !important;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm) !important;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  
+  &:hover {
+    box-shadow: var(--shadow-md) !important;
+  }
+  
+  .v-card-title {
+    color: var(--color-on-surface);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+  }
+  
+  .v-card-text {
+    color: var(--color-on-surface);
+    opacity: var(--opacity-high);
+  }
+}
+
+// Ajustes para botones
+.v-btn {
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
+  
+  &--variant-tonal {
+    background-color: rgba(var(--v-theme-primary), 0.1) !important;
+    color: var(--color-primary) !important;
+    
+    &:hover {
+      background-color: rgba(var(--v-theme-primary), 0.2) !important;
+    }
+  }
+}
+
+// Ajustes para campos de formulario
+.v-field {
+  background-color: var(--color-surface-variant) !important;
+  color: var(--color-on-surface) !important;
+  border-radius: var(--border-radius-sm);
+  
+  .v-field__outline {
+    color: var(--border-color);
+  }
+  
+  .v-field__input {
+    color: var(--color-on-surface);
+  }
+  
+  .v-label {
+    color: var(--color-on-surface);
+    opacity: var(--opacity-medium);
+  }
+  
+  &--focused {
+    .v-field__outline {
+      color: var(--color-primary) !important;
+      opacity: 1;
+    }
+    
+    .v-label {
+      color: var(--color-primary) !important;
+      opacity: 1;
+    }
+  }
+}
+
+// Ajustes para la barra de navegación
+.v-navigation-drawer {
+  background-color: var(--color-surface) !important;
+  border-right: 1px solid var(--border-color) !important;
+  
+  .v-list-item {
+    color: var(--color-on-surface);
+    opacity: var(--opacity-high);
+    
+    &--active {
+      color: var(--color-primary) !important;
+      background-color: rgba(var(--v-theme-primary), 0.1) !important;
+      opacity: 1;
+      
+      .v-icon {
+        color: var(--color-primary) !important;
+      }
+    }
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05) !important;
+      opacity: 1;
+    }
+  }
+}
+
+// Ajustes para la barra de la aplicación
+.v-app-bar {
+  background-color: var(--color-surface) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+// Ajustes para tablas
+.v-data-table {
+  background: transparent !important;
+  color: var(--color-on-surface);
+  
+  th {
+    font-weight: 600;
+    color: var(--color-on-surface) !important;
+    background-color: var(--color-surface-variant) !important;
+    opacity: var(--opacity-high);
+  }
+  
+  tr {
+    background-color: var(--color-surface) !important;
+    
+    &:hover {
+      background-color: var(--color-surface-variant) !important;
+    }
+  }
+  
+  td {
+    border-bottom: 1px solid var(--border-color) !important;
+  }
+}
+
+// Ajustes para diálogos
+.v-dialog {
+  // Fix para animaciones NaN
+  .v-overlay__content {
+    transform: none !important;
+    animation: none !important;
+    
+    &[style*="NaN"] {
+      transform: translate(50%, 50%) scale(1, 1) !important;
+    }
+  }
+  
+  .v-overlay__content > .v-card {
+    background-color: var(--color-surface) !important;
+    color: var(--color-on-surface);
+    
+    .v-card-title {
+      color: var(--color-on-surface);
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .v-card-text {
+      color: var(--color-on-surface);
+      opacity: var(--opacity-high);
+    }
+  }
+}
+
+// Corrección general para elementos con valores NaN en transform
+*[style*="NaN"] {
+  transform: none !important;
+}
+
+// Ajustes para tooltips
+.v-tooltip {
+  background-color: var(--color-surface-variant) !important;
+  color: var(--color-on-surface) !important;
+  font-size: 0.8rem !important;
+  padding: 4px 8px !important;
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow-md);
+}
+
+// Ajustes para chips
+.v-chip {
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-surface-variant) !important;
+  color: var(--color-on-surface) !important;
+  
+  &--active {
+    background-color: var(--color-primary) !important;
+    color: #000 !important;
+  }
+}
+
+// Ajustes para iconos
+.v-icon {
+  opacity: var(--opacity-high);
+  transition: opacity 0.2s ease, color 0.2s ease;
+  
+  &:hover {
+    opacity: 1;
+  }
+}
+
+// Ajustes para switches
+.v-selection-control {
+  min-height: 40px;
+  
+  &__input > .v-icon {
+    color: var(--color-primary) !important;
+  }
+}
+
+// Ajustes para sliders
+.v-slider-thumb {
+  background-color: var(--color-primary) !important;
+  border: 2px solid var(--color-surface) !important;
+}
+
+.v-slider-track__fill {
+  background-color: var(--color-primary) !important;
+}
+
+// Ajustes para tabs
+.v-tab {
+  font-weight: 500;
+  letter-spacing: normal;
+  color: var(--color-on-surface) !important;
+  opacity: var(--opacity-medium);
+  
+  &--selected {
+    color: var(--color-primary) !important;
+    opacity: 1;
+  }
+}
+
+.v-tab-indicator {
+  color: var(--color-primary) !important;
+}
+
+// Ajustes para alerts
+.v-alert {
+  border-radius: var(--border-radius-md);
+  border: 1px solid currentColor;
+  background-color: transparent !important;
+  
+  &--error {
+    color: var(--color-error) !important;
+  }
+  
+  &--info {
+    color: var(--color-info) !important;
+  }
+  
+  &--success {
+    color: var(--color-success) !important;
+  }
+  
+  &--warning {
+    color: var(--color-warning) !important;
+  }
+}
+
+// Ajustes para menús
+.v-menu-content {
+  background-color: var(--color-surface) !important;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md) !important;
+  box-shadow: var(--shadow-md) !important;
+  
+  .v-list {
+    background-color: transparent !important;
+  }
+  
+  .v-list-item {
+    color: var(--color-on-surface);
+    opacity: var(--opacity-high);
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05) !important;
+      opacity: 1;
+    }
+  }
+}
+
+// Ajustes para toolbars
+.v-toolbar {
+  background-color: var(--color-surface) !important;
+  
+  .v-toolbar-title {
+    font-weight: 600;
+    color: var(--color-on-surface);
+  }
+}
+
+// Ajustes para badges
+.v-badge__badge {
+  font-weight: 600;
+  border: 2px solid var(--color-surface);
+}
+
+// Ajustes para dividers
+.v-divider {
+  opacity: 0.12;
+  border-color: var(--border-color) !important;
+}
+
+// Ajustes para listas
+.v-list {
+  background-color: var(--color-surface) !important;
+  color: var(--color-on-surface);
+  
+  .v-list-item {
+    min-height: 48px;
+    color: var(--color-on-surface);
+    
+    &__content {
+      color: inherit;
+    }
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+    
+    &--active {
+      color: var(--color-primary) !important;
+      background-color: rgba(var(--v-theme-primary), 0.1) !important;
+      
+      .v-icon {
+        color: var(--color-primary) !important;
+      }
+    }
+  }
+}
+
+// Ajustes para grupos de botones
+.v-btn-toggle {
+  background: transparent;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
+  
+  .v-btn {
+    opacity: var(--opacity-medium);
+    color: var(--color-on-surface) !important;
+    
+    &--selected {
+      background-color: rgba(var(--v-theme-primary), 0.2) !important;
+      color: var(--color-primary) !important;
+      opacity: 1;
+    }
+    
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+// Ajustes para elementos deshabilitados
+.v-btn--disabled,
+.v-field--disabled {
+  opacity: var(--opacity-disabled) !important;
+}
+
+// Ajustes para campos de búsqueda
+.v-field--focused {
+  .v-field__outline {
+    opacity: 1;
+  }
+}
+
+// Ajustes para avatares
+.v-avatar {
+  border: 2px solid var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+// Ajustes para mensajes de validación
+.v-messages {
+  min-height: 0;
+  min-width: 100%;
+  color: var(--color-error) !important;
+  opacity: var(--opacity-high);
+  
+  .v-messages__message {
+    line-height: 1.2;
+    margin-top: 4px;
+  }
+}
+
+// Ajustes para elementos con scroll personalizado
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface-variant);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-secondary);
+  border-radius: 4px;
+  
+  &:hover {
+    background: var(--color-secondary-darken);
+  }
+}
+

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Botón Login - CogniTrack</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .test-button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            min-width: 200px;
+        }
+        .test-button:hover {
+            background: #1565c0;
+        }
+        .result {
+            margin: 20px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            min-height: 50px;
+        }
+        .success { background: rgba(76, 175, 80, 0.3); }
+        .error { background: rgba(244, 67, 54, 0.3); }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 Test de Diagnóstico - Botón Login</h1>
+        <p>Este test ayuda a identificar el problema con el botón de login</p>
+        
+        <div class="test-section">
+            <h3>Test 1: Botón JavaScript Simple</h3>
+            <button class="test-button" onclick="testSimpleClick()">Test Click Simple</button>
+            <div id="result1" class="result">Esperando click...</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 2: Event Listener</h3>
+            <button id="testBtn2" class="test-button">Test Event Listener</button>
+            <div id="result2" class="result">Esperando click...</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 3: Simular Apertura de Diálogo</h3>
+            <button class="test-button" onclick="testDialog()">Test Diálogo</button>
+            <div id="result3" class="result">Esperando click...</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 4: Verificar Console.log</h3>
+            <button class="test-button" onclick="testConsoleLog()">Test Console Log</button>
+            <div id="result4" class="result">Revisar consola del navegador</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test 5: Simular openLoginDialog</h3>
+            <button class="test-button" onclick="testOpenLoginDialog()">Test openLoginDialog</button>
+            <div id="result5" class="result">Esperando click...</div>
+        </div>
+        
+        <div class="info-section" style="margin-top: 40px; text-align: left; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+            <h3>🔍 Instrucciones de Prueba:</h3>
+            <ol>
+                <li><strong>Abre las DevTools del navegador</strong> (F12)</li>
+                <li><strong>Ve a la pestaña Console</strong></li>
+                <li><strong>Haz click en cada botón de test</strong></li>
+                <li><strong>Observa los mensajes en consola y en pantalla</strong></li>
+                <li><strong>Reporta qué tests funcionan y cuáles no</strong></li>
+            </ol>
+            
+            <h3>📋 Información del Sistema:</h3>
+            <p id="userAgent"></p>
+            <p id="datetime"></p>
+        </div>
+    </div>
+    
+    <script>
+        // Test 1: Click simple
+        function testSimpleClick() {
+            console.log('🟢 Test 1: Click simple funcionando');
+            document.getElementById('result1').innerHTML = '✅ Click simple FUNCIONA';
+            document.getElementById('result1').className = 'result success';
+        }
+        
+        // Test 2: Event Listener
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('testBtn2').addEventListener('click', function() {
+                console.log('🟢 Test 2: Event listener funcionando');
+                document.getElementById('result2').innerHTML = '✅ Event Listener FUNCIONA';
+                document.getElementById('result2').className = 'result success';
+            });
+        });
+        
+        // Test 3: Simular diálogo
+        function testDialog() {
+            console.log('🟢 Test 3: Simulando apertura de diálogo');
+            const dialogDiv = document.createElement('div');
+            dialogDiv.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                color: black;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                z-index: 10000;
+            `;
+            dialogDiv.innerHTML = `
+                <h3>🎉 Diálogo de Prueba</h3>
+                <p>Si ves esto, los diálogos pueden funcionar</p>
+                <button onclick="this.parentElement.remove()" style="padding: 10px 20px; margin-top: 10px;">Cerrar</button>
+            `;
+            document.body.appendChild(dialogDiv);
+            document.getElementById('result3').innerHTML = '✅ Diálogo CREADO';
+            document.getElementById('result3').className = 'result success';
+        }
+        
+        // Test 4: Console log
+        function testConsoleLog() {
+            console.log('🔵 Test 4: Console.log funcionando correctamente');
+            console.warn('🟡 Test 4: Console.warn funcionando correctamente');
+            console.error('🔴 Test 4: Console.error funcionando correctamente');
+            document.getElementById('result4').innerHTML = '✅ Revisa la CONSOLA - deben aparecer 3 mensajes';
+            document.getElementById('result4').className = 'result success';
+        }
+        
+        // Test 5: Simular openLoginDialog
+        let showLoginDialog = false;
+        function testOpenLoginDialog() {
+            console.log('🔵 Test 5: Simulando openLoginDialog...');
+            console.log('🔵 showLoginDialog antes:', showLoginDialog);
+            showLoginDialog = true;
+            console.log('🔵 showLoginDialog después:', showLoginDialog);
+            console.log('🔵 Función openLoginDialog simulada completada');
+            
+            if (showLoginDialog) {
+                document.getElementById('result5').innerHTML = '✅ openLoginDialog SIMULADO correctamente';
+                document.getElementById('result5').className = 'result success';
+            } else {
+                document.getElementById('result5').innerHTML = '❌ openLoginDialog FALLÓ';
+                document.getElementById('result5').className = 'result error';
+            }
+        }
+        
+        // Información del sistema
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('userAgent').textContent = 'Navegador: ' + navigator.userAgent;
+            document.getElementById('datetime').textContent = 'Fecha/Hora: ' + new Date().toLocaleString();
+        });
+        
+        // Log de carga de página
+        console.log('🚀 Test page cargada correctamente - ' + new Date().toISOString());
+    </script>
+</body>
+</html>

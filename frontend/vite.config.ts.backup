@@ -1,0 +1,214 @@
+import { defineConfig, loadEnv } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import { fileURLToPath } from 'url';
+import vuetify from 'vite-plugin-vuetify';
+
+export default defineConfig(({ mode }) => {
+  // Cargar variables de entorno
+  const env = loadEnv(mode, process.cwd(), '');
+  
+  // Configuración fija para la API de Ollama
+  const apiUrl = 'http://192.168.0.104:11434';
+  console.log(`🔌 Usando URL de la API: ${apiUrl}`);
+  
+  if (!env.VITE_API_URL) {
+    console.warn(`⚠️  VITE_API_URL no está definida, usando valor por defecto: ${apiUrl}`);
+  }
+  
+  // Configuración común para los proxies
+  const commonProxyConfig = {
+    target: apiUrl,
+    changeOrigin: true,
+    secure: false,
+    ws: true,
+    xfwd: true,
+    withCredentials: false,
+    // Configuración de encabezados
+    headers: {
+      'Connection': 'keep-alive',
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache'
+    },
+    // Configuración de timeouts
+    proxyTimeout: 30000,
+    timeout: 30000,
+    // Deshabilitar buffering para respuestas de streaming
+    buffer: false
+  };
+
+  return {
+    // Configuración del servidor de desarrollo
+    server: {
+      port: 5173,
+      host: '0.0.0.0',
+      strictPort: true,
+      open: false,
+      cors: true,
+      fs: {
+        strict: false,
+      },
+      hmr: {
+        protocol: 'ws',
+        host: 'localhost',
+        port: 5173,
+        clientPort: 5173,
+        path: '/ws',
+        timeout: 30000,
+        overlay: true
+      },
+      proxy: {
+        // Proxy para la API de Ollama
+        '/api': {
+          ...commonProxyConfig,
+          rewrite: (path) => path.replace(/^\/api/, ''),
+          configure: (proxy, _options) => {
+            proxy.on('proxyReq', (proxyReq, req) => {
+              console.log(`🔵 [${new Date().toISOString()}] ${req.method} ${req.url} -> ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
+              
+              // Configuración de encabezados para todas las solicitudes
+              proxyReq.setHeader('Accept', 'application/json');
+              proxyReq.setHeader('Content-Type', 'application/json');
+              proxyReq.setHeader('X-Requested-With', 'XMLHttpRequest');
+              proxyReq.setHeader('X-Ollama-Client', 'cognitrack-web/1.0');
+              
+              // Si es una solicitud OPTIONS, responder inmediatamente
+              if (req.method === 'OPTIONS') {
+                proxyReq.end();
+                return;
+              }
+              
+              // No usar credenciales para evitar el problema de CORS
+              if (req.headers.origin) {
+                proxyReq.setHeader('Origin', req.headers.origin);
+              }
+            });
+            
+            // Manejo de errores mejorado
+            proxy.on('error', (err, req, res) => {
+              console.error('❌ Error en el proxy:', err);
+              if (!res.headersSent) {
+                res.writeHead(500, { 
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': '*'
+                });
+              }
+              res.end(JSON.stringify({ 
+                error: 'Error en el proxy',
+                message: err.message,
+                code: err.code
+              }));
+            });
+            
+            // Manejo de respuesta del proxy
+            proxy.on('proxyRes', (proxyRes, req) => {
+              // Agregar headers CORS a la respuesta
+              proxyRes.headers['Access-Control-Allow-Origin'] = '*';
+              proxyRes.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
+              proxyRes.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With, X-Ollama-Client';
+              proxyRes.headers['Access-Control-Allow-Credentials'] = 'true';
+              proxyRes.headers['Vary'] = 'Origin';
+              
+              // Log de respuesta
+              console.log(`🟢 [${new Date().toISOString()}] ${req.method} ${req.url} -> ${proxyRes.statusCode}`);
+              
+              // Log detallado en modo debug
+              if (process.env.DEBUG) {
+                console.log('📦 Headers de respuesta:', proxyRes.headers);
+              }
+            });
+          }
+        },
+        
+        // WebSocket para Ollama
+        '/api/ws': {
+          ...commonProxyConfig,
+          target: 'ws://192.168.0.104:11434',
+          ws: true,
+          rewrite: (path) => path.replace(/^\/api\/ws/, ''),
+          logLevel: 'debug',
+          on: {
+            proxyReqWs: (proxyReq, req, socket) => {
+              console.log(`🔵 [WS] Conexión WebSocket establecida: ${req.url}`);
+              
+              // Configuración de encabezados para WebSocket
+              proxyReq.setHeader('Sec-WebSocket-Protocol', 'json');
+              proxyReq.setHeader('X-Ollama-Client', 'cognitrack-web/1.0');
+            },
+            error: (err, req, res) => {
+              console.error('❌ Error en WebSocket:', err);
+              if (res && !res.headersSent) {
+                res.writeHead(500, { 
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ 
+                  error: 'WebSocket error',
+                  message: 'Error en la conexión WebSocket con Ollama',
+                  details: err.message 
+                }));
+              }
+            },
+            close: (req, socket, head) => {
+              console.log(`🔴 [WS] Conexión WebSocket cerrada: ${req.url}`);
+            }
+          }
+        }
+      }
+    },
+    
+    // Plugins
+    plugins: [
+      vue(),
+      vuetify({
+        autoImport: true,
+        styles: 'none',
+      }),
+    ],
+    
+    // Resolución de módulos
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+        'vue': 'vue/dist/vue.esm-bundler.js',
+      },
+    },
+    
+    // Variables de entorno
+    define: { 
+      'process.env': {},
+      'import.meta.env.VITE_API_URL': JSON.stringify('http://192.168.0.104:11434'),
+      'import.meta.env.VITE_DEV_SERVER_URL': JSON.stringify('http://localhost:5173')
+    },
+    
+    // Configuración de CSS
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `@import "@/assets/styles/main.scss";`,
+        },
+      },
+    },
+    
+    // Configuración de vista previa
+    preview: {
+      port: 5174,
+      strictPort: true,
+      host: '0.0.0.0',
+      open: false,
+      cors: true
+    },
+    
+    // Configuración de compilación
+    build: {
+      chunkSizeWarningLimit: 2000,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vuetify': ['vuetify'],
+            'mdi': ['@mdi/font/css/materialdesignicons.css']
+          }
+        }
+      }
+    }
+  };
+});

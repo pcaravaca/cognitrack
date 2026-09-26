@@ -1,0 +1,1295 @@
+<template>
+  <v-container fluid class="dashboard-container pa-0">
+    <!-- Loading State -->
+    <v-container v-if="isLoading" class="d-flex align-center justify-center loading-container" style="height: 100vh;">
+      <v-card class="loading-card" elevation="8" rounded="lg" max-width="600">
+        <v-card-text class="pa-8 text-center">
+          <div class="loading-icon-container mb-6">
+            <v-progress-circular
+              :model-value="loadingProgress"
+              color="primary"
+              size="80"
+              width="6"
+              indeterminate
+              class="loading-spinner"
+            >
+              <v-icon size="32" color="primary" class="spin">mdi-cog</v-icon>
+            </v-progress-circular>
+          </div>
+          <h2 class="text-h5 mb-4">Cargando CogniTrack</h2>
+          <p class="text-body-1 mb-4">{{ loadingMessage }}</p>
+          <v-progress-linear
+            :model-value="loadingProgress"
+            color="primary"
+            height="8"
+            rounded
+            class="mb-4"
+          ></v-progress-linear>
+          <p class="text-caption text-medium-emphasis">Versión 1.0.0</p>
+        </v-card-text>
+      </v-card>
+    </v-container>
+    
+    <!-- Error State -->
+    <v-container v-else-if="serversStore.error" class="error--text">
+      <v-alert type="error" variant="tonal">
+        Error al cargar los datos: {{ serversStore.error }}
+        <v-btn color="error" @click="initializeDashboard" class="mt-2">
+          Reintentar
+        </v-btn>
+      </v-alert>
+    </v-container>
+    
+    <!-- Main Content -->
+    <v-container v-else class="pa-6">
+      <v-row>
+        <v-col cols="12">
+          <h1 class="text-h4 font-weight-bold mb-4">Panel de Control</h1>
+          <p class="text-body-1 text-medium-emphasis mb-6">
+            Gestiona tus servidores Ollama y monitorea su estado
+          </p>
+          
+          <!-- Componente de lista de servidores -->
+          <server-list @select="handleServerSelect" />
+        </v-col>
+      </v-row>
+    </v-container>
+
+    <!-- Main Content -->
+    <v-main class="dashboard-content">
+      <v-container fluid class="pa-6">
+        <!-- Page Header -->
+        <v-row class="mb-6">
+          <v-col cols="12">
+            <div class="d-flex align-center justify-space-between">
+              <div>
+                <h1 class="text-h4 font-weight-bold">Panel de Control</h1>
+                <p class="text-body-1 text-medium-emphasis">Gestión de servidores Ollama</p>
+              </div>
+              <div class="d-flex gap-2">
+                <v-btn
+                  color="primary"
+                  variant="outlined"
+                  prepend-icon="mdi-magnify-scan"
+                  @click="discoverServers"
+                  :loading="isDiscovering"
+                >
+                  Descubrir Servidores
+                </v-btn>
+                <v-btn 
+                  color="primary" 
+                  prepend-icon="mdi-plus" 
+                  @click="showAddDialog = true"
+                >
+                  Agregar Servidor
+                </v-btn>
+              </div>
+            </div>
+          </v-col>
+        </v-row>
+
+        <!-- Server Status Alert -->
+        <v-alert
+          v-if="discoveryStatus"
+          :type="discoveryStatus.type"
+          :title="discoveryStatus.title"
+          :text="discoveryStatus.message"
+          class="mb-4"
+          closable
+          @click:close="discoveryStatus = null"
+        />
+
+        <!-- Servers Grid -->
+        <v-row v-if="servers.length > 0" class="mb-6">
+          <v-col 
+            v-for="server in servers" 
+            :key="server.id"
+            cols="12"
+            sm="6"
+            md="4"
+            lg="3"
+          >
+            <v-card
+              :color="getServerCardColor(server)"
+              :dark="isServerActive(server)"
+              class="server-card"
+              elevation="4"
+              @click="selectServer(server)"
+            >
+              <v-card-text>
+                <div class="d-flex justify-space-between align-start">
+                  <div>
+                    <div class="d-flex align-center mb-2">
+                      <v-icon
+                        :color="isServerActive(server) ? 'white' : 'success'"
+                        class="mr-2"
+                      >
+                        mdi-server
+                      </v-icon>
+                      <h3 class="text-h6 font-weight-medium">
+                        {{ server.name }}
+                        <v-chip
+                          v-if="server.isDefault"
+                          size="x-small"
+                          color="white"
+                          text-color="primary"
+                          class="ml-2"
+                        >
+                          Predeterminado
+                          height="8"
+                          rounded
+                        ></v-progress-linear>
+                        <span class="text-caption ml-2">{{ process.cpu }}%</span>
+                      </td>
+                      <td>{{ formatBytes(process.memory) }}</td>
+                      <td>
+                        <v-chip :color="process.status === 'running' ? 'success' : 'warning'" size="small">
+                          {{ process.status }}
+                        </v-chip>
+                      </td>
+                      <td>
+                        <v-btn
+                          v-if="process.status === 'running'"
+                          icon="mdi-stop"
+                          size="small"
+                          variant="text"
+                          color="error"
+                          @click="stopProcess(process)"
+                        ></v-btn>
+                        <v-btn
+                          v-else
+                          icon="mdi-play"
+                          size="small"
+                          variant="text"
+                          color="success"
+                          @click="startProcess(process)"
+                        ></v-btn>
+                      </td>
+                    </tr>
+                  </tbody>
+                </v-table>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
+  </v-container>
+</template>
+
+<script setup lang="ts">
+// Vue and Router
+import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+// Stores
+import { useServersStore } from '@/stores/servers'
+
+// Components
+import ServerList from '@/components/dashboard/ServerList.vue'
+
+// Types
+import type { Server } from '@/types/server'
+
+// Load ECharts from CDN
+const loadECharts = () => {
+  return new Promise((resolve) => {
+    if (window.echarts) {
+      resolve(window.echarts)
+      return
+    }
+
+    const script = document.createElement('script')
+    script.src = 'https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js'
+    script.onload = () => {
+      console.log('✅ ECharts cargado correctamente')
+      resolve(window.echarts)
+    }
+    script.onerror = (error) => {
+      console.error('❌ Error al cargar ECharts:', error)
+      resolve(null)
+    }
+    document.head.appendChild(script)
+  })
+}
+
+// Initialize dashboard data
+const authStore = useAuthStore()
+const serversStore = useServersStore()
+const router = useRouter()
+const route = useRoute()
+
+// Loading state
+const isLoading = ref(false)
+const lastUpdateTime = ref('Nunca')
+const loadingMessage = ref('Cargando datos del servidor...')
+const loadingProgress = ref(0)
+const loadingSteps = ref([
+  'Verificando autenticación...',
+  'Cargando servidores...',
+  'Verificando estado de servidores...',
+  'Inicializando gráficos...',
+  'Cargando datos en tiempo real...'
+])
+
+// Loading state management
+const startLoading = (message = 'Cargando...') => {
+  isLoading.value = true
+  loadingMessage.value = message
+  loadingProgress.value = 0
+}
+
+const updateLoadingProgress = (stepIndex, message) => {
+  loadingProgress.value = Math.round((stepIndex / loadingSteps.value.length) * 100)
+  loadingMessage.value = message
+}
+
+const stopLoading = () => {
+  isLoading.value = false
+  loadingMessage.value = 'Cargando datos del servidor...'
+  loadingProgress.value = 0
+}
+
+// Charts
+const resourceChart = ref(null)
+const storageChart = ref(null)
+const resourceChartInstance = ref(null)
+const storageChartInstance = ref(null)
+
+// Sample data for demonstration
+const serverStats = ref([
+  { 
+    title: 'CPU Usage', 
+    value: '24%', 
+    trend: 2.5, 
+    icon: 'mdi-cpu-64-bit',
+    color: 'primary'
+  },
+  { 
+    title: 'Memory', 
+    value: '3.2/16 GB', 
+    trend: -1.2, 
+    icon: 'mdi-memory',
+    color: 'success'
+  },
+  { 
+    title: 'Storage', 
+    value: '128/512 GB', 
+    trend: 5.3, 
+    icon: 'mdi-harddisk',
+    color: 'warning'
+  },
+  { 
+    title: 'Network', 
+    value: '45.2 Mbps', 
+    trend: 12.7, 
+    icon: 'mdi-lan',
+    color: 'info'
+  }
+])
+
+const processes = ref([
+  { pid: 1234, name: 'nginx', user: 'www-data', cpu: 12.5, memory: 1024 * 1024 * 128, status: 'running' },
+  { pid: 2345, name: 'node', user: 'node', cpu: 45.2, memory: 1024 * 1024 * 512, status: 'running' },
+  { pid: 3456, name: 'python', user: 'user', cpu: 5.7, memory: 1024 * 256, status: 'stopped' },
+  { pid: 4567, name: 'redis', user: 'redis', cpu: 2.1, memory: 1024 * 64, status: 'running' },
+  { pid: 5678, name: 'postgres', user: 'postgres', cpu: 8.9, memory: 1024 * 320, status: 'running' }
+])
+
+// Methods
+const getUsageColor = (usage) => {
+  if (usage < 50) return 'success'
+  if (usage < 80) return 'warning'
+  return 'error'
+}
+
+const formatBytes = (bytes, decimals = 2) => {
+  if (bytes === 0) return '0 Bytes'
+  const k = 1024
+  const dm = decimals < 0 ? 0 : decimals
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
+}
+
+const forceDemoMode = async () => {
+  console.log('🎭 Forzando modo demo...')
+  
+  // Limpiar servidores actuales
+  serversStore.servers = []
+  
+  // Crear servidor demo
+  const demoServer = {
+    id: 999,
+    name: 'Demo Server',
+    ip: 'demo.local',
+    port: 11434,
+    status: 'offline',
+    cpu: 0,
+    memory: 0,
+    disk: 0,
+    uptime: 'Demo Mode',
+    lastBackup: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+  
+  serversStore.servers.push(demoServer)
+  serversStore.currentServer = demoServer
+  
+  // Forzar actualización de gráficos
+  await nextTick()
+  updateCharts()
+  
+  console.log('✅ Modo demo activado - dashboard funcionando sin servidores reales')
+}
+
+const refreshData = async () => {
+  console.log('🔄 Actualizando datos del dashboard...')
+  try {
+    // Solo actualizar gráficos si están inicializados
+    if (resourceChart.value && resourceChartInstance.value) {
+      updateCharts()
+    }
+  } catch (error) {
+    console.error('Error al actualizar datos:', error)
+  }
+}
+
+const updateCharts = async () => {
+  try {
+    // Verificar si ECharts está cargado
+    if (!window.echarts) {
+      console.log('ECharts no está cargado, intentando cargar...')
+      await loadECharts()
+      if (!window.echarts) {
+        console.warn('No se pudo cargar ECharts')
+        return
+      }
+    }
+    
+    // Inicializar gráficos si es necesario
+    if (!resourceChartInstance.value || !storageChartInstance.value) {
+      console.log('Inicializando gráficos...')
+      const initialized = await initializeCharts()
+      if (!initialized) {
+        console.warn('No se pudieron inicializar los gráficos')
+        return
+      }
+    }
+
+    // Actualizar datos del gráfico de recursos
+    if (resourceChartInstance.value) {
+      const resourceOptions = getResourceChartOptions()
+      resourceChartInstance.value.setOption(resourceOptions, true)
+      console.log('✅ Gráfico de recursos actualizado')
+    }
+    
+    // Actualizar datos del gráfico de almacenamiento
+    if (storageChartInstance.value) {
+      const storageOptions = getStorageChartOptions()
+      storageChartInstance.value.setOption(storageOptions, true)
+      console.log('✅ Gráfico de almacenamiento actualizado')
+    }
+    
+    // Forzar redimensionamiento
+    window.dispatchEvent(new Event('resize'))
+    
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    console.error('❌ Error al actualizar gráficos:', errorMessage);
+    
+    // Intentar limpiar e inicializar de nuevo en caso de error
+    const safeDispose = (chart: any) => {
+      try {
+        if (chart && typeof chart.dispose === 'function') {
+          chart.dispose();
+        }
+      } catch (e) {
+        console.warn('Error al limpiar gráfico:', e);
+      }
+    };
+    
+    safeDispose(resourceChartInstance.value);
+    safeDispose(storageChartInstance.value);
+    
+    resourceChartInstance.value = null;
+    storageChartInstance.value = null;
+    
+    // Reintentar después de un breve retraso
+    if (retryCount < 3) {
+      retryCount++;
+      console.log(`Reintentando inicializar gráficos (intento ${retryCount}/3)...`);
+      setTimeout(initializeCharts, 1000 * retryCount);
+    } else {
+      console.error('Se agotaron los intentos de inicializar los gráficos');
+      // Mostrar un mensaje al usuario
+      error.value = 'No se pudieron cargar los gráficos. Por favor, recargue la página.';
+    }
+  }
+}
+
+const initializeCharts = async (maxRetries = 3, retryDelay = 300) => {
+  console.log('📊 Inicializando gráficos...')
+  
+  // Esperar un ciclo de renderizado adicional
+  await nextTick()
+  
+  // Esperar a que los contenedores estén disponibles
+  let retries = 0
+  while (retries < maxRetries) {
+    if (resourceChart.value && storageChart.value) {
+      break
+    }
+    console.log(`🔄 Esperando contenedores de gráficos (intento ${retries + 1}/${maxRetries})...`)
+    await new Promise(resolve => setTimeout(resolve, retryDelay))
+    retries++
+  }
+  
+  if (!resourceChart.value || !storageChart.value) {
+    console.error('❌ No se encontraron los contenedores de gráficos después de varios intentos')
+    return false
+  }
+  
+  console.log('✅ Contenedores de gráficos encontrados')
+  console.log('resourceChart:', resourceChart.value)
+  console.log('storageChart:', storageChart.value)
+
+  try {
+    // Asegurarse de que ECharts esté cargado
+    if (!window.echarts) {
+      console.log('ECharts no está cargado, cargando...')
+      await loadECharts()
+      if (!window.echarts) {
+        throw new Error('No se pudo cargar ECharts')
+      }
+    }
+
+    // Destruir instancias existentes si las hay
+    if (resourceChartInstance.value) {
+      try {
+        resourceChartInstance.value.dispose()
+      } catch (e) {
+        console.warn('Error al limpiar instancia de gráfico de recursos:', e)
+      }
+      resourceChartInstance.value = null
+    }
+    
+    if (storageChartInstance.value) {
+      try {
+        storageChartInstance.value.dispose()
+      } catch (e) {
+        console.warn('Error al limpiar instancia de gráfico de almacenamiento:', e)
+      }
+      storageChartInstance.value = null
+    }
+    
+    // Verificar que los contenedores sigan disponibles
+    if (!resourceChart.value || !storageChart.value) {
+      throw new Error('Los contenedores de gráficos ya no están disponibles')
+    }
+    
+    // Inicializar gráfico de recursos
+    try {
+      resourceChartInstance.value = window.echarts.init(resourceChart.value)
+      console.log('✅ Gráfico de recursos inicializado')
+      
+      // Configurar opciones iniciales
+      const resourceOptions = getResourceChartOptions()
+      resourceChartInstance.value.setOption(resourceOptions, true)
+    } catch (e) {
+      console.error('❌ Error al inicializar gráfico de recursos:', e)
+      throw e
+    }
+    
+    // Inicializar gráfico de almacenamiento
+    try {
+      storageChartInstance.value = window.echarts.init(storageChart.value)
+      console.log('✅ Gráfico de almacenamiento inicializado')
+      
+      // Configurar opciones iniciales
+      const storageOptions = getStorageChartOptions()
+      storageChartInstance.value.setOption(storageOptions, true)
+    } catch (e) {
+      console.error('❌ Error al inicializar gráfico de almacenamiento:', e)
+      // Limpiar la instancia fallida
+      if (storageChartInstance.value) {
+        try {
+          storageChartInstance.value.dispose()
+        } catch (disposeError) {
+          console.warn('Error al limpiar gráfico de almacenamiento fallido:', disposeError)
+        }
+        storageChartInstance.value = null
+      }
+      throw e
+    }
+    
+    // Forzar un redimensionamiento después de la inicialización
+    setTimeout(() => {
+      if (resourceChartInstance.value) resourceChartInstance.value.resize()
+      if (storageChartInstance.value) storageChartInstance.value.resize()
+    }, 100)
+    
+    return true
+    
+  } catch (error) {
+    console.error('❌ Error crítico al inicializar gráficos:', error)
+    // Limpiar cualquier instancia parcialmente creada
+    if (resourceChartInstance.value) {
+      try {
+        resourceChartInstance.value.dispose()
+      } catch (e) {}
+      resourceChartInstance.value = null
+    }
+    if (storageChartInstance.value) {
+      try {
+        storageChartInstance.value.dispose()
+      } catch (e) {}
+      storageChartInstance.value = null
+    }
+    return false
+  }
+}
+
+const getDefaultChartOptions = () => {
+  // Verificar si ECharts está disponible
+  if (typeof window === 'undefined' || !window.echarts) {
+    console.warn('ECharts no está disponible');
+    return {};
+  }
+
+  // Crear gradientes para las áreas
+  const createGradient = (color1, color2) => {
+    return new window.echarts.graphic.LinearGradient(0, 0, 0, 1, [
+      { offset: 0, color: color1 },
+      { offset: 1, color: color2 }
+    ]);
+  };
+
+  return {
+    backgroundColor: 'transparent',
+    title: {
+      text: 'Uso de Recursos',
+      left: 'center',
+      textStyle: {
+        color: '#333',
+        fontWeight: 'bold',
+        fontSize: 16
+      }
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross',
+        label: {
+          backgroundColor: '#6a7985'
+        }
+      },
+      formatter: function(params) {
+        if (!params || !params.length) return '';
+        let result = params[0].axisValue + '<br/>';
+        params.forEach(item => {
+          const value = item.seriesName === 'Red' 
+            ? item.value + ' MB/s' 
+            : Math.round(item.value) + '%';
+          result += `${item.marker} ${item.seriesName}: ${value}<br/>`;
+        });
+        return result;
+      }
+    },
+    legend: {
+      data: ['CPU', 'Memoria', 'GPU', 'Red'],
+      bottom: 0,
+      textStyle: {
+        color: '#666'
+      }
+    },
+    grid: [{
+      left: 50,
+      right: 50,
+      top: 80,
+      bottom: 80,
+      containLabel: false
+    }],
+    xAxis: [{
+      type: 'category',
+      boundaryGap: false,
+      data: [],
+      axisLine: { 
+        show: true,
+        lineStyle: {
+          color: '#D9D9D9'
+        }
+      },
+      axisTick: { 
+        show: true,
+        alignWithLabel: true
+      },
+      axisLabel: {
+        color: '#666',
+        fontSize: 12
+      },
+      splitLine: { 
+        show: true,
+        lineStyle: {
+          color: '#F0F0F0'
+        }
+      }
+    }],
+    yAxis: [
+      {
+        type: 'value',
+        name: 'Uso (%)',
+        min: 0,
+        max: 100,
+        position: 'left',
+        axisLine: { 
+          show: true,
+          lineStyle: {
+            color: '#D9D9D9'
+          }
+        },
+        axisTick: { 
+          show: true
+        },
+        axisLabel: {
+          formatter: '{value}%',
+          color: '#666',
+          fontSize: 12
+        },
+        splitLine: { 
+          show: true,
+          lineStyle: {
+            color: '#F0F0F0'
+          }
+        }
+      },
+      {
+        type: 'value',
+        name: 'MB/s',
+        min: 0,
+        position: 'right',
+        axisLine: { 
+          show: true,
+          lineStyle: {
+            color: '#D9D9D9'
+          }
+        },
+        axisTick: { 
+          show: true
+        },
+        axisLabel: {
+          formatter: '{value} MB/s',
+          color: '#666',
+          fontSize: 12
+        },
+        splitLine: { 
+          show: false
+        }
+      }
+    ],
+    series: [
+      {
+        name: 'CPU',
+        type: 'line',
+        smooth: true,
+        symbol: 'none',
+        sampling: 'lttb',
+        lineStyle: {
+          width: 3,
+          color: '#3a4de9'
+        },
+        areaStyle: {
+          color: createGradient('rgba(58, 77, 233, 0.5)', 'rgba(58, 77, 233, 0.1)')
+        },
+        emphasis: {
+          focus: 'series',
+          itemStyle: {
+            color: '#3a4de9'
+          }
+        },
+        data: []
+      },
+      {
+        name: 'Memoria',
+        type: 'line',
+        smooth: true,
+        symbol: 'none',
+        sampling: 'lttb',
+        lineStyle: {
+          width: 3,
+          color: '#00ddff'
+        },
+        areaStyle: {
+          color: createGradient('rgba(0, 221, 255, 0.5)', 'rgba(0, 221, 255, 0.1)')
+        },
+        emphasis: {
+          focus: 'series',
+          itemStyle: {
+            color: '#00ddff'
+          }
+        },
+        data: []
+      },
+      {
+        name: 'GPU',
+        type: 'line',
+        smooth: true,
+        symbol: 'none',
+        sampling: 'lttb',
+        lineStyle: {
+          width: 3,
+          color: '#ff0087'
+        },
+        areaStyle: {
+          color: createGradient('rgba(255, 0, 135, 0.5)', 'rgba(255, 0, 135, 0.1)')
+        },
+        emphasis: {
+          focus: 'series',
+          itemStyle: {
+            color: '#ff0087'
+          }
+        },
+        data: []
+      },
+      {
+        name: 'Red',
+        type: 'line',
+        yAxisIndex: 1,
+        smooth: true,
+        symbol: 'none',
+        sampling: 'lttb',
+        lineStyle: {
+          width: 3,
+          color: '#00ff9d'
+        },
+        areaStyle: {
+          color: createGradient('rgba(0, 255, 157, 0.3)', 'rgba(0, 255, 157, 0.05)')
+        },
+        emphasis: {
+          focus: 'series',
+          itemStyle: {
+            color: '#00ff9d'
+          }
+        },
+        data: []
+      }
+    ]
+  };
+};
+
+const getResourceChartOptions = () => {
+  // Obtener opciones base
+  const options = getDefaultChartOptions();
+  
+  // Asegurarse de que window.echarts está disponible
+  if (!window.echarts) {
+    console.warn('ECharts no está disponible');
+    return options;
+  }
+  
+  // Inicializar datos vacíos para las series
+  const now = new Date();
+  const xAxisData = [];
+  
+  // Generar 10 puntos de datos vacíos (últimos 10 segundos)
+  for (let i = 9; i >= 0; i--) {
+    const time = new Date(now.getTime() - i * 1000);
+    xAxisData.push(time.toLocaleTimeString());
+  }
+  
+  // Asegurarse de que las opciones de los ejes estén correctamente definidas
+  const xAxis = Array.isArray(options.xAxis) ? [...options.xAxis] : [{...options.xAxis}];
+  if (xAxis.length > 0) {
+    xAxis[0].data = xAxisData;
+  }
+  
+  // Actualizar opciones con datos iniciales
+  return {
+    ...options,
+    xAxis: xAxis,
+    series: options.series.map((series, index) => {
+      // Configuración específica para cada tipo de serie
+      const seriesConfig = {
+        ...series,
+        data: new Array(10).fill(0), // Inicializar con 10 ceros
+        showSymbol: false,
+        emphasis: {
+          focus: 'series'
+        }
+      };
+      
+      // Solo agregar markPoint y markLine si hay datos
+      if (series.data && series.data.length > 0) {
+        seriesConfig.markPoint = {
+          data: [
+            { type: 'max', name: 'Máximo' },
+            { type: 'min', name: 'Mínimo' }
+          ]
+        };
+        seriesConfig.markLine = {
+          data: [{ type: 'average', name: 'Promedio' }]
+        };
+      }
+      
+      // Aplicar configuración específica por tipo de serie
+      if (series.name === 'Red') {
+        // Configuración específica para la serie de red
+        return {
+          ...seriesConfig,
+          yAxisIndex: 1, // Usar el segundo eje Y para la red
+          lineStyle: {
+            width: 2,
+            color: '#00ff9d'
+          },
+          areaStyle: {
+            opacity: 0.3,
+            color: new window.echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(0, 255, 157, 0.5)' },
+              { offset: 1, color: 'rgba(0, 255, 157, 0.1)' }
+            ])
+          }
+        };
+      }
+      
+      // Configuración por defecto para otras series
+      return seriesConfig;
+    })
+  };
+};
+
+const getStorageChartOptions = () => {
+  // Verificar si ECharts está disponible
+  if (typeof window === 'undefined' || !window.echarts) {
+    console.warn('ECharts no está disponible');
+    return {
+      title: { text: 'Gráfico no disponible' },
+      series: []
+    };
+  }
+  
+  // Crear gradientes para las áreas
+  const createGradient = (color1: string, color2: string) => {
+    return new window.echarts.graphic.LinearGradient(0, 0, 0, 1, [
+      { offset: 0, color: color1 },
+      { offset: 1, color: color2 }
+    ]);
+  };
+  
+  return {
+    backgroundColor: 'transparent',
+    title: {
+      text: 'Uso de Almacenamiento',
+      left: 'center',
+      textStyle: {
+        color: '#333',
+        fontWeight: 'bold',
+        fontSize: 16
+      }
+    },
+    tooltip: {
+      trigger: 'item',
+      formatter: '{a} <br/>{b}: {c} GB ({d}%)'
+    },
+    legend: {
+      orient: 'vertical',
+      left: 10,
+      data: ['Sistema', 'Aplicaciones', 'Documentos', 'Multimedia', 'Otros']
+    },
+    series: [
+      {
+        name: 'Uso de Almacenamiento',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: '#fff',
+          borderWidth: 2
+        },
+        label: {
+          show: false,
+          position: 'center'
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: '18',
+            fontWeight: 'bold'
+          }
+        },
+        labelLine: {
+          show: false
+        },
+        data: [
+          { value: 35, name: 'Sistema', itemStyle: { color: createGradient('#3a4de9', '#6a5acd') } },
+          { value: 25, name: 'Aplicaciones', itemStyle: { color: createGradient('#00ddff', '#1e90ff') } },
+          { value: 20, name: 'Documentos', itemStyle: { color: createGradient('#ff0087', '#ff69b4') } },
+          { value: 15, name: 'Multimedia', itemStyle: { color: createGradient('#00ff9d', '#32cd32') } },
+          { value: 5, name: 'Otros', itemStyle: { color: createGradient('#ffa500', '#ffd700') } }
+        ]
+      }
+    ]
+  }
+}
+
+// Initialize dashboard
+const initializeDashboard = async () => {
+  try {
+    startLoading('Inicializando dashboard...')
+    
+    // Cargar servidores si no están cargados
+    if (!serversStore.servers.length) {
+      updateLoadingProgress(1, 'Cargando servidores...')
+      await serversStore.initializeServers()
+    }
+    
+    // Seleccionar el primer servidor si hay alguno
+    if (serversStore.servers.length > 0 && !serversStore.currentServer) {
+      serversStore.setCurrentServer(serversStore.servers[0].id)
+    }
+    
+    // Inicializar gráficos
+    updateLoadingProgress(2, 'Inicializando gráficos...')
+    await initializeCharts()
+    
+    // Iniciar actualización automática
+    updateLoadingProgress(3, 'Iniciando actualización automática...')
+    startAutoRefresh()
+    
+    stopLoading()
+  } catch (error) {
+    console.error('Error al inicializar el dashboard:', error)
+    stopLoading()
+  }
+}
+
+// Lifecycle hooks
+onMounted(async () => {
+  console.log('🏗️ Montando componente Dashboard...')
+  window.addEventListener('resize', handleResize)
+  
+  try {
+    // Primero cargar ECharts
+    await loadECharts()
+    
+    // Luego inicializar el dashboard
+    await initializeDashboard()
+    
+    // Esperar a que el DOM se actualice completamente
+    await nextTick()
+    
+    // Inicializar gráficos después de que el componente esté montado
+    await nextTick() // Esperar un ciclo de renderizado adicional
+    
+    if (resourceChart.value && storageChart.value) {
+      await initializeCharts()
+      
+      // Pequeño retraso para asegurar que los gráficos estén listos
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
+      // Iniciar actualización de gráficos
+      updateCharts()
+      
+      // Iniciar actualización automática
+      startAutoRefresh()
+    } else {
+      console.warn('Los contenedores de gráficos no están disponibles')
+      // Reintentar después de un breve retraso
+      setTimeout(() => {
+        if (resourceChart.value && storageChart.value) {
+          initializeCharts().then(updateCharts)
+        }
+      }, 500)
+    }
+    
+  } catch (error) {
+    console.error('Error al montar el dashboard:', error)
+  }
+})
+
+onUnmounted(() => {
+  console.log('🗑️ Desmontando componente Dashboard...')
+  window.removeEventListener('resize', handleResize)
+  stopAutoRefresh()
+  
+  // Limpiar instancias de gráficos
+  if (resourceChartInstance.value) {
+    resourceChartInstance.value.dispose()
+    resourceChartInstance.value = null
+  }
+
+  if (storageChartInstance.value) {
+    storageChartInstance.value.dispose()
+    storageChartInstance.value = null
+  }
+  
+  // Detener actualización automática
+  if (autoRefreshInterval.value) {
+    clearInterval(autoRefreshInterval.value)
+    autoRefreshInterval.value = null
+  }
+})
+
+// Auto-refresh methods
+const autoRefreshInterval = null
+const isAutoRefresh = ref(true)
+const refreshInterval = ref(30000) // 30 segundos
+let refreshTimer = null
+
+const stopAutoRefresh = () => {
+  if (refreshTimer !== null) {
+    clearInterval(refreshTimer)
+    refreshTimer = null
+  }
+}
+
+const startAutoRefresh = (interval = refreshInterval.value) => {
+  stopAutoRefresh()
+  if (isAutoRefresh.value && interval > 0) {
+    refreshTimer = window.setInterval(() => {
+      if (resourceChartInstance.value && storageChartInstance.value) {
+        updateCharts()
+      }
+    }, interval)
+  }
+}
+
+const toggleAutoRefresh = () => {
+  isAutoRefresh.value = !isAutoRefresh.value
+  if (isAutoRefresh.value) {
+    startAutoRefresh()
+  } else {
+    stopAutoRefresh()
+  }
+}
+
+// Set refresh interval
+const setRefreshInterval = (seconds) => {
+  refreshInterval.value = seconds
+  if (isAutoRefresh.value) {
+    startAutoRefresh()
+  }
+}
+
+// Handle window resize
+let resizeTimeout = null
+const handleResize = () => {
+  if (resizeTimeout) {
+    clearTimeout(resizeTimeout)
+  }
+  
+  resizeTimeout = setTimeout(() => {
+    if (document.hidden) return // No hacer nada si la pestaña no está visible
+    
+    console.log('🔄 Redimensionando gráficos...')
+    
+    const resizeChart = (chartInstance, name) => {
+      if (!chartInstance || !chartInstance.value) {
+        console.warn(`⚠️ Instancia de gráfico ${name} no disponible`)
+        return false
+      }
+      
+      try {
+        if (chartInstance.value.isDisposed?.()) {
+          console.warn(`⚠️ Gráfico ${name} ya fue eliminado`)
+          return false
+        }
+        
+        chartInstance.value.resize()
+        console.log(`✅ Gráfico de ${name} redimensionado`)
+        return true
+      } catch (error) {
+        console.error(`❌ Error al redimensionar gráfico ${name}:`, error)
+        return false
+      }
+    }
+    
+    // Intentar redimensionar cada gráfico individualmente
+    const resourceOk = resizeChart(resourceChartInstance, 'recursos')
+    const storageOk = resizeChart(storageChartInstance, 'almacenamiento')
+    
+    // Si alguno falló, intentar reinicializar
+    if (!resourceOk || !storageOk) {
+      console.log('🔄 Alguno de los gráficos falló, intentando reinicializar...')
+      initializeCharts().catch(err => {
+        console.error('❌ Error al reinicializar gráficos:', err)
+      })
+    }
+  }, 300) // 300ms de retraso
+}
+
+// Limpieza al desmontar el componente
+onUnmounted(() => {
+  console.log('🗑️ Desmontando componente Dashboard...')
+  
+  // Limpiar el temporizador de redimensionamiento
+  if (resizeTimeout) {
+    clearTimeout(resizeTimeout)
+    resizeTimeout = null
+  }
+  
+  // Eliminar el event listener
+  window.removeEventListener('resize', handleResize)
+  
+  // Detener actualizaciones automáticas
+  stopAutoRefresh()
+  
+  // Función auxiliar para limpiar gráficos de forma segura
+  const cleanupChart = (chartInstance, name) => {
+    if (!chartInstance?.value) {
+      console.log(`ℹ️ No hay instancia de gráfico ${name} para limpiar`)
+      return
+    }
+    
+    try {
+      if (typeof chartInstance.value.dispose === 'function' && !chartInstance.value.isDisposed?.()) {
+        chartInstance.value.dispose()
+        console.log(`✅ Gráfico de ${name} limpiado correctamente`)
+      }
+    } catch (error) {
+      console.error(`⚠️ Error al limpiar gráfico ${name}:`, error)
+    } finally {
+      chartInstance.value = null
+    }
+  }
+  
+  // Limpiar ambos gráficos
+  cleanupChart(resourceChartInstance, 'recursos')
+  cleanupChart(storageChartInstance, 'almacenamiento')
+})
+
+// Watch for route changes
+watch(() => route.query, (newQuery) => {
+  if (newQuery.refresh) {
+    refreshData()
+  }
+})
+
+// Watch for server status changes to exit demo mode
+watch(() => serversStore.servers, (newServers) => {
+  const onlineServer = newServers.find(server => server.status === 'online')
+  if (onlineServer && serversStore.currentServer?.id === 999) { // 999 es el ID del servidor demo
+    console.log('✅ Servidor en línea detectado, saliendo del modo demo...')
+    // Establecer el servidor en línea como actual
+    serversStore.setCurrentServer(onlineServer.id)
+    // Actualizar los gráficos con datos reales
+    refreshData()
+  }
+}, { deep: true })
+
+// Watch for route changes
+watch(() => route.path, async (newPath) => {
+  console.log('🔄 Cambio de ruta detectado:', newPath)
+  if (newPath === '/dashboard') {
+    await initializeDashboard()
+  }
+}, { immediate: true })
+
+// Process management
+const startProcess = (process) => {
+  console.log('Starting process:', process.pid)
+  // In a real app, this would call an API to start the process
+  process.status = 'running'
+}
+
+const stopProcess = (process) => {
+  console.log('Stopping process:', process.pid)
+  // In a real app, this would call an API to stop the process
+  process.status = 'stopped'
+}
+
+// Expose methods for testing
+const testConnection = () => {
+  console.log('Testing connection...')
+  // Test connection logic here
+}
+
+defineExpose({
+  testConnection,
+  refreshData,
+  toggleAutoRefresh
+})
+</script>
+
+<style scoped>
+.dashboard-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.dashboard-content {
+  padding-top: 64px; /* Adjust based on your app bar height */
+  transition: all 0.3s ease;
+}
+
+.stat-card {
+  height: 100%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.loading-container {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+}
+
+.loading-card {
+  transition: all 0.3s ease;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Estilos para los contenedores de gráficos */
+.chart-container {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+}
+
+/* Asegurar que los gráficos se redimensionen correctamente */
+.v-card-text {
+  position: relative;
+}
+
+.loading-icon-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+}
+
+.loading-spinner {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.spin {
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 960px) {
+  .dashboard-content {
+    padding-top: 56px; /* Adjust for mobile */
+  }
+  
+  .stat-card {
+    margin-bottom: 16px;
+  }
+}
+</style>

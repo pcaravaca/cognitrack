@@ -1,0 +1,158 @@
+{
+  "clusterNodes": "Nodos del Clúster",
+  "scale": "Escalar",
+  "reduce": "Reducir",
+  "deployedModels": "Modelos Desplegados",
+  "node": "Nodo",
+  "cpuUsage": "Uso de CPU",
+  "memoryUsage": "Uso de Memoria",
+  "resourceUsage": "Uso de Recursos",
+  "memoryStatus": "Estado de Memoria",
+  "high": "Alto",
+  "normal": "Normal",
+  "critical": "Crítico",
+  "stable": "Estable",
+  
+  "dashboard": {
+    "title": "Panel de Control",
+    "overview": "Vista General",
+    "serversConfigured": "servidores configurados",
+    "pauseRefresh": "Pausar actualización",
+    "resumeRefresh": "Reanudar actualización",
+    "noServersTitle": "No hay servidores configurados",
+    "noServersDescription": "Agrega tu primer servidor Ollama para comenzar a monitorear",
+    "addFirstServer": "Agregar Primer Servidor",
+    "memory": "Memoria",
+    "models": "Modelos",
+    "lastUpdate": "Última actualización",
+    "serverOffline": "Servidor fuera de línea"
+  },
+  
+  "nav": {
+    "dashboard": "Panel de Control",
+    "servers": "Servidores",
+    "serversManagement": "Administración de Servidores",
+    "settings": "Configuración",
+    "help": "Ayuda"
+  },
+  
+  "servers": {
+    "management": {
+      "title": "Administración de Servidores",
+      "subtitle": "Administra y monitorea servidores Ollama en tu red"
+    },
+    "actions": {
+      "discover": "Descubrir Servidores",
+      "add": "Agregar Servidor",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "test": "Probar Conexión"
+    },
+    "list": {
+      "title": "Servidores Ollama",
+      "count": "servidores",
+      "noModels": "Sin modelos"
+    },
+    "table": {
+      "status": "Estado",
+      "info": "Información del Servidor",
+      "models": "Modelos",
+      "proxyRoute": "Ruta del Proxy",
+      "active": "Activo",
+      "actions": "Acciones"
+    },
+    "status": {
+      "online": "En línea",
+      "offline": "Desconectado",
+      "unknown": "Desconocido"
+    },
+    "dialog": {
+      "addTitle": "Agregar Servidor Ollama",
+      "editTitle": "Editar Servidor Ollama"
+    },
+    "form": {
+      "name": "Nombre del Servidor",
+      "hostIp": "IP del Host",
+      "port": "Puerto",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Descripción opcional para el servidor",
+      "enabled": "Habilitado"
+    },
+    "validation": {
+      "nameRequired": "El nombre del servidor es requerido",
+      "nameMinLength": "El nombre debe tener al menos 3 caracteres",
+      "ipRequired": "La dirección IP es requerida",
+      "ipInvalid": "Formato de dirección IP inválido",
+      "portRequired": "El puerto es requerido",
+      "portRange": "El puerto debe estar entre 1 y 65535"
+    },
+    "delete": {
+      "title": "Eliminar Servidor",
+      "message": "¿Estás seguro de que quieres eliminar el servidor '{name}'? Esta acción no se puede deshacer."
+    },
+    "discovery": {
+      "scanning": "Escaneando Red",
+      "scanningMessage": "Buscando servidores Ollama en la red...",
+      "completed": "Descubrimiento Completado",
+      "foundServers": "Se encontraron {count} nuevos servidores",
+      "error": "Error de Descubrimiento"
+    }
+  },
+  
+  "app": {
+    "footer": {
+      "copyright": "© 2025 CogniTrack. Todos los derechos reservados."
+    },
+    "common": {
+      "github": "GitHub",
+      "help": "Ayuda"
+    }
+  },
+  
+  "landing": {
+    "subtitle": "Sistema de Monitoreo Multi-Plataforma para IA",
+    "featuresTitle": "Características Principales",
+    "featuresSubtitle": "Todo lo que necesitas para monitorear tu infraestructura Ollama",
+    "ctaSubtitle": "Accede a tu panel de control personalizado"
+  },
+  
+  "common": {
+    "cancel": "Cancelar",
+    "login": "Iniciar Sesión",
+    "add": "Agregar",
+    "update": "Actualizar",
+    "delete": "Eliminar",
+    "save": "Guardar",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "warning": "Advertencia",
+    "info": "Información"
+  },
+  
+  "auth": {
+    "welcome": "Bienvenido a CogniTrack",
+    "loginMessage": "Ingresa tus credenciales para acceder al sistema",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "profile": "Perfil",
+    "changePassword": "Cambiar Contraseña",
+    "currentPassword": "Contraseña Actual",
+    "newPassword": "Nueva Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "passwordChanged": "Contraseña cambiada exitosamente",
+    "loginError": "Error de autenticación",
+    "invalidCredentials": "Credenciales incorrectas",
+    "sessionExpired": "Sesión expirada"
+  },
+  
+  "validation": {
+    "required": "Este campo es obligatorio",
+    "email": "Por favor ingresa un email válido",
+    "minLength": "La longitud mínima es de {min} caracteres",
+    "maxLength": "La longitud máxima es de {max} caracteres",
+    "passwordMismatch": "Las contraseñas no coinciden"
+  }
+}

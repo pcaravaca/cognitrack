@@ -1,0 +1,578 @@
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+import type { Server, ServerStats } from '@/types/server.types'
+
+// Clave para almacenar los servidores en localStorage
+const SERVERS_STORAGE_KEY = 'cognitrack_servers';
+
+// Función para verificar un servidor Ollama
+async function checkOllamaServer(ip: string, port: number = 11434): Promise<{ success: boolean; error?: string }> {
+  // Verificar si estamos en desarrollo
+  const isDevelopment = import.meta.env.DEV;
+  
+  if (isDevelopment) {
+    // En desarrollo, simular un servidor online con datos simulados
+    console.warn('Modo desarrollo: Usando datos simulados para el servidor Ollama');
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // Devolver solo las propiedades definidas en el tipo de retorno
+        resolve({
+          success: true
+        });
+      }, 500);
+    });
+  }
+
+  // En producción, intentar conectar directamente
+  try {
+    const response = await fetch(`http://${ip}:${port}/api/tags`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      return { 
+        success: false, 
+        error: error.error || `Error: ${response.status} ${response.statusText}`
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error al verificar el servidor Ollama:', error);
+    return {
+      success: false,
+      error: (error instanceof Error ? error.message : 'Error desconocido al verificar el servidor Ollama') || undefined
+    };
+  }
+}
+
+// Función para cargar servidores desde localStorage
+function loadServersFromStorage(): Server[] {
+  try {
+    const savedServers = localStorage.getItem(SERVERS_STORAGE_KEY);
+    if (savedServers) {
+      return JSON.parse(savedServers);
+    }
+  } catch (error) {
+    console.error('Error al cargar servidores desde localStorage:', error);
+  }
+  return [];
+}
+
+// Función para guardar servidores en localStorage
+function saveServersToStorage(servers: Server[]): void {
+  try {
+    localStorage.setItem(SERVERS_STORAGE_KEY, JSON.stringify(servers));
+  } catch (error) {
+    console.error('Error al guardar servidores en localStorage:', error);
+  }
+}
+
+// Función para descubrir servidores en la red local
+async function discoverServers(): Promise<Server[]> {
+  // Implementación básica de descubrimiento de servidores
+  // En un entorno real, esto podría usar WebRTC, mDNS, o una API de descubrimiento
+  return [
+    {
+      id: Date.now(),
+      name: 'Servidor Local',
+      ip: 'localhost',
+      port: 11434,
+      status: 'offline',
+      isBackendAvailable: false,
+      lastChecked: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }
+  ];
+}
+
+export const useServersStore = defineStore('servers', () => {
+  // Estado de disponibilidad del backend
+  const isBackendAvailable = ref(true);
+  
+  // Última vez que se comprobó la disponibilidad del backend
+  const lastBackendCheck = ref<Date | null>(null);
+  
+  // Estado del store
+  const servers = ref<Server[]>([]);
+  const currentServer = ref<Server | null>(null);
+  const isLoading = ref(false);
+  const error = ref<string | null>(null);
+  const connectionStatus = ref<'disconnected' | 'connecting' | 'connected' | 'error'>('disconnected');
+  const connectionError = ref<string | null>(null);
+
+  // Función para obtener servidor por ID
+  const getServerById = (id: number) => {
+    return servers.value.find(server => server.id === id) || null
+  }
+
+  // Función para remover servidor
+  function removeServer(serverId: number) {
+    const index = servers.value.findIndex(s => s.id === serverId)
+    if (index !== -1) {
+      servers.value.splice(index, 1)
+      if (currentServer.value?.id === serverId) {
+        currentServer.value = servers.value.length > 0 ? servers.value[0] : null
+      }
+      
+      // Persistir cambios en localStorage
+      saveServersToStorage(servers.value)
+      console.log('🗑️ Servidor eliminado y cambios persistidos')
+    }
+  }
+
+  // Función para verificar estado del servidor
+  async function checkServerStatus(serverId: number): Promise<'online' | 'offline'> {
+    return Math.random() > 0.5 ? 'online' : 'offline'
+  }
+
+  // Función para guardar servidor (agregar o actualizar)
+  async function saveServer(serverData: Partial<Server>): Promise<void> {
+    try {
+      isLoading.value = true;
+      error.value = null;
+      
+      if (serverData.id && getServerById(serverData.id)) {
+        // Actualizar servidor existente
+        const index = servers.value.findIndex(s => s.id === serverData.id);
+        if (index !== -1) {
+          servers.value[index] = { 
+            ...servers.value[index], 
+            ...serverData,
+            updatedAt: new Date().toISOString()
+          } as Server;
+        }
+      } else {
+        // Agregar nuevo servidor - VALIDAR CONEXIÓN PRIMERO
+        if (serverData.ip) {
+          console.log(`🔍 Validando conexión a servidor: ${serverData.ip}`);
+          const isOnline = await checkOllamaServer(serverData.ip);
+          
+          const newId = Math.max(0, ...servers.value.map(s => s.id)) + 1;
+          const newServer: Server = {
+            id: newId,
+            name: serverData.name || `Ollama Server (${serverData.ip})`,
+            ip: serverData.ip,
+            port: serverData.port || 11434,
+            status: isOnline.success ? 'online' : 'offline',
+            cpu: 0,
+            memory: 0,
+            disk: 0,
+            network: {
+              bytesSent: 0,
+              bytesReceived: 0,
+              connections: 0
+            },
+            uptime: isOnline.success ? 'Conectado' : 'Desconectado',
+            lastBackup: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            lastChecked: new Date().toISOString(),
+            isBackendAvailable: isOnline.success,
+            ...serverData
+          } as Server;
+          
+          servers.value.push(newServer);
+          console.log(`✅ Servidor agregado con estado: ${newServer.status}`);
+        } else {
+          throw new Error('IP del servidor es requerida');
+        }
+      }
+      
+      // Guardar automáticamente en localStorage
+      saveServersToStorage(servers.value);
+      
+      console.log('✅ Servidor guardado exitosamente y persistido');
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Error al guardar servidor';
+      console.error('❌ Error al guardar servidor:', err);
+      throw err;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Función para establecer el servidor actual
+  function setCurrentServer(serverId: number) {
+    currentServer.value = getServerById(serverId)
+  }
+
+  // Función para probar conexión al servidor actual
+  async function testConnection() {
+    if (!currentServer.value) {
+      throw new Error('No hay servidor seleccionado')
+    }
+
+    try {
+      connectionStatus.value = 'connecting'
+      connectionError.value = null
+      
+      // Usar backend proxy para evitar CORS
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000)
+      
+      // Usar el endpoint del backend proxy
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8081'
+      const response = await fetch(`${backendUrl}/api/v1/ollama/tags?server=${currentServer.value.ip}:11434`, {
+        method: 'GET',
+        signal: controller.signal,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      
+      clearTimeout(timeoutId)
+      
+      if (response.ok) {
+        connectionStatus.value = 'connected'
+        return true
+      } else {
+        connectionStatus.value = 'error'
+        connectionError.value = `Error HTTP: ${response.status}`
+        return false
+      }
+    } catch (err) {
+      connectionStatus.value = 'error'
+      connectionError.value = err instanceof Error ? err.message : 'Error de conexión'
+      throw err
+    }
+  }
+
+  // Datos por defecto para cuando el backend no está disponible
+  function getDefaultStats(server?: Server): ServerStats {
+    const now = new Date().toISOString()
+    return {
+      cpu: {
+        usage: 0,
+        cores: 4,
+        model: 'Desconocido',
+        temperature: 0
+      },
+      memory: {
+        total: 0,
+        used: 0,
+        free: 0,
+        usage: 0
+      },
+      disk: {
+        total: 0,
+        used: 0,
+        free: 0,
+        usage: 0
+      },
+      network: {
+        bytesSent: 0,
+        bytesReceived: 0,
+        connections: 0
+      },
+      models: [],
+      version: '0.0.0',
+      status: 'offline' as const,
+      updatedAt: now,
+      isBackendAvailable: false,
+      lastChecked: now,
+      error: 'No se pudo conectar al servidor'
+    }
+  }
+
+  // Función para verificar la disponibilidad del backend
+  async function checkBackendAvailability(): Promise<boolean> {
+    try {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8081';
+      const response = await fetch(`${backendUrl}/api/health`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      const isAvailable = response.ok;
+      isBackendAvailable.value = isAvailable;
+      lastBackendCheck.value = new Date();
+      
+      return isAvailable;
+    } catch (backendError) {
+      console.error('Error al verificar disponibilidad del backend:', backendError);
+      isBackendAvailable.value = false;
+      lastBackendCheck.value = new Date();
+      return false;
+    }
+  }
+
+  // Función para obtener estadísticas reales del servidor
+  async function getServerStats(serverId?: number): Promise<ServerStats> {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8081';
+    const targetServer = serverId !== undefined ? getServerById(serverId) : currentServer.value;
+
+    if (!targetServer) {
+      console.warn('⚠️ No se especificó ningún servidor; devolviendo estadísticas por defecto.');
+      return getDefaultStats();
+    }
+
+    const serverUrl = `http://${targetServer.ip}:${targetServer.port ?? 11434}`;
+
+    try {
+      await checkBackendAvailability();
+
+      const systemResponse = await fetch(`${backendUrl}/api/system?server=${encodeURIComponent(serverUrl)}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+
+      if (!systemResponse.ok) {
+        const errorPayload = await systemResponse.json().catch(() => ({}));
+        throw new Error(errorPayload.message || `Error ${systemResponse.status} ${systemResponse.statusText}`);
+      }
+
+      const systemData = await systemResponse.json();
+
+      const modelsResponse = await fetch(`${backendUrl}/api/v1/ollama/tags?server=${encodeURIComponent(serverUrl)}`, {
+        method: 'GET',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      }).catch(() => null);
+
+      let models: ServerStats['models'] = [];
+      if (modelsResponse?.ok) {
+        const modelsJson = await modelsResponse.json().catch(() => []);
+        if (Array.isArray(modelsJson)) {
+          models = modelsJson;
+        } else if (Array.isArray(modelsJson?.models)) {
+          models = modelsJson.models;
+        }
+      }
+
+      const now = new Date().toISOString();
+      const stats: ServerStats = {
+        cpu: {
+          usage: systemData.cpu?.usage ?? 0,
+          cores: systemData.cpu?.cores ?? 0,
+          model: systemData.cpu?.model ?? 'Desconocido',
+          temperature: systemData.cpu?.temperature,
+        },
+        memory: {
+          total: systemData.memory?.total ?? 0,
+          used: systemData.memory?.used ?? 0,
+          free: systemData.memory?.free ?? 0,
+          usage: systemData.memory?.usage ?? 0,
+        },
+        disk: {
+          total: systemData.disk?.total ?? 0,
+          used: systemData.disk?.used ?? 0,
+          free: systemData.disk?.free ?? 0,
+          usage: systemData.disk?.usage ?? 0,
+        },
+        network: {
+          bytesSent: systemData.network?.bytesSent ?? 0,
+          bytesReceived: systemData.network?.bytesReceived ?? 0,
+          connections: systemData.network?.connections ?? 0,
+        },
+        models,
+        version: systemData.version ?? 'Desconocido',
+        status: 'online',
+        updatedAt: now,
+        isBackendAvailable: true,
+        lastChecked: now,
+      };
+
+      const serverIndex = servers.value.findIndex((s) => s.id === targetServer.id);
+      if (serverIndex !== -1) {
+        servers.value[serverIndex] = {
+          ...servers.value[serverIndex],
+          stats,
+          status: 'online',
+          isBackendAvailable: true,
+          lastChecked: now,
+          updatedAt: now,
+          error: undefined,
+        };
+      }
+
+      saveServersToStorage(servers.value);
+      return stats;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error desconocido al obtener estadísticas';
+      console.error(`❌ Error al obtener estadísticas del servidor ${targetServer.name}:`, message);
+
+      const fallback = {
+        ...getDefaultStats(targetServer),
+        error: message,
+        lastChecked: new Date().toISOString(),
+      };
+
+      const serverIndex = servers.value.findIndex((s) => s.id === targetServer.id);
+      if (serverIndex !== -1) {
+        servers.value[serverIndex] = {
+          ...servers.value[serverIndex],
+          stats: fallback,
+          status: 'offline',
+          isBackendAvailable: false,
+          lastChecked: fallback.lastChecked,
+          error: message,
+        };
+      }
+
+      error.value = message;
+      saveServersToStorage(servers.value);
+      return fallback;
+    }
+  }
+
+  // Getters computados
+  const onlineServers = computed(() => 
+    servers.value.filter((s: Server) => s.status === 'online')
+  );
+  
+  const offlineServers = computed(() => 
+    servers.value.filter((s: Server) => s.status === 'offline')
+  );
+  
+  const errorServers = computed(() => 
+    servers.value.filter((s: Server) => s.status === 'error')
+  );
+
+  // Definir el store
+  const store = {
+    // Estado
+    servers,
+    currentServer,
+    isLoading,
+    error,
+    connectionStatus,
+    connectionError,
+    
+    // Getters
+    getServerById,
+    onlineServers,
+    offlineServers,
+    errorServers,
+    
+    // Acciones
+    initializeServers,
+    saveServer,
+    setCurrentServer,
+    removeServer,
+    checkServerStatus,
+    discoverServers,
+    testConnection,
+    getServerStats,
+    updateServer,
+    checkBackendAvailability,
+    
+    // Utilidades
+    loadServersFromStorage,
+    saveServersToStorage,
+    checkOllamaServer,
+    getDefaultStats,
+    
+    // Propiedades computadas
+    isBackendAvailable: computed(() => isBackendAvailable.value),
+    lastBackendCheck: computed(() => lastBackendCheck.value)
+  };
+
+  return store;
+});
+
+  // Inicializar el store
+  async function initializeServers() {
+    try {
+      console.log('🔍 Inicializando servidores...');
+      const isDevelopment = import.meta.env.DEV;
+      
+      // Cargar servidores guardados o usar el servidor local por defecto
+      const storedServers = loadServersFromStorage();
+      
+      if (storedServers.length > 0) {
+        servers.value = storedServers;
+        console.log(`📂 ${storedServers.length} servidores cargados desde el almacenamiento local`);
+      } else {
+        // Crear un servidor local por defecto si no hay ninguno
+        const defaultServer: Server = {
+          id: 1,
+          name: 'Servidor Local',
+          ip: 'localhost',
+          port: 11434,
+          status: isDevelopment ? 'online' : 'offline', // Forzar online en desarrollo
+          isBackendAvailable: isDevelopment, // Habilitar en desarrollo
+          lastChecked: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          // Añadir datos de ejemplo para modo desarrollo
+          ...(isDevelopment ? {
+            stats: {
+              cpu: {
+                usage: 45,
+                cores: 8,
+                model: 'Intel(R) Core(TM) i7-10700K'
+              },
+              memory: {
+                total: 32 * 1024 * 1024 * 1024, // 32GB
+                used: 8 * 1024 * 1024 * 1024,   // 8GB
+                free: 24 * 1024 * 1024 * 1024,  // 24GB
+                usage: 25
+              },
+              disk: {
+                total: 1000 * 1024 * 1024 * 1024, // 1TB
+                used: 200 * 1024 * 1024 * 1024,   // 200GB
+                free: 800 * 1024 * 1024 * 1024,   // 800GB
+                usage: 20
+              },
+              network: {
+                bytesSent: 1024 * 1024,     // 1MB
+                bytesReceived: 2 * 1024 * 1024, // 2MB
+                connections: 5
+              },
+              models: [
+                {
+                  name: 'llama2:latest',
+                  size: 3826562609,
+                  modified: new Date().toISOString()
+                }
+              ],
+              version: '0.1.0',
+              status: 'online',
+              updatedAt: new Date().toISOString()
+            }
+          } : {})
+        };
+        servers.value.push(defaultServer);
+        saveServersToStorage(servers.value);
+        console.log('✅ Servidor local predeterminado creado');
+        
+        // En modo desarrollo, no es necesario verificar el servidor
+        if (isDevelopment) {
+          console.log('🔧 Modo desarrollo: Usando datos simulados, omitiendo verificación del servidor');
+          return servers.value;
+        }
+      }
+      
+      // Verificar estado de los servidores con manejo de errores mejorado
+      for (const server of servers.value) {
+        try {
+          const { success, error } = await checkOllamaServer(server.ip, server.port);
+          console.log(`Estado del servidor ${server.name}:`, { success, error });
+          
+          await updateServer(server.id, {
+            status: success ? 'online' : 'offline',
+            isBackendAvailable: success,
+            lastChecked: new Date().toISOString(),
+            error: error || undefined
+          });
+          
+          if (success) {
+            // Intentar obtener estadísticas si el servidor está en línea
+            try {
+              await getServerStats(server.id);
+            } catch (statsError) {
+              console.warn(`No se pudieron obtener estadísticas para ${server.name}:`, statsError);
+            }
+          }
+        } catch (serverError) {
+          console.error(`Error al verificar servidor ${server.name}:`, serverError);
+          await updateServer(server.id, {

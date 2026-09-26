@@ -1,0 +1,286 @@
+# Script de despliegue completo para CogniTrack
+# Versión compatible con Windows PowerShell 5.1
+# Incluye frontend, backend y configuración de Nginx
+# Version: 1.0.3
+
+# Verificar versión de PowerShell
+if ($PSVersionTable.PSVersion.Major -lt 5) {
+    Write-Host "[ERROR] Este script requiere Windows PowerShell 5.1 o superior." -ForegroundColor Red
+    exit 1
+}
+
+# Parámetros del script
+param(
+    [Parameter(Mandatory=$true)]
+    [string]$ServerIP,
+    [int]$SshPort = 2222,
+    [string]$Username = "peter",
+    [string]$RemoteDir = "/home/peter/cognitrack",
+    [string]$Domain = "cognitrack.local"
+)
+
+# Guardar los parámetros en variables de script para acceso global
+$script:ServerIP = $ServerIP
+$script:SshPort = $SshPort
+$script:Username = $Username
+$script:RemoteDir = $RemoteDir
+$script:Domain = $Domain
+
+# Función para mostrar estado
+function Write-Status {
+    param (
+        [string]$Message,
+        [string]$Type = "INFO"
+    )
+
+    $timestamp = Get-Date -Format "HH:mm:ss"
+    $color = switch ($Type) {
+        "INFO" { "White" }
+        "SUCCESS" { "Green" }
+        "WARNING" { "Yellow" }
+        "ERROR" { "Red" }
+        "DOCKER" { "Cyan" }
+        "FRONTEND" { "Magenta" }
+        "BACKEND" { "Blue" }
+        default { "White" }
+    }
+
+    Write-Host "[$($timestamp)] [$($Type)] $($Message)" -ForegroundColor $color
+}
+
+# Función para ejecutar comandos remotos
+function Invoke-RemoteCommand {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Command,
+        
+        [Parameter()]
+        [switch]$Sudo = $false,
+        
+        [Parameter()]
+        [switch]$NoStatus = $false
+    )
+    
+    $ErrorActionPreference = 'Stop'
+    
+    try {
+        # Configuración de conexión SSH
+        $sshTarget = "${Username}@${ServerIP}"
+        $sshArgs = @(
+            "-p", $SshPort,
+            "-o", "StrictHostKeyChecking=no",
+            "-o", "UserKnownHostsFile=/dev/null"
+        ) -join ' '
+        
+        # Prepara el comando
+        $fullCommand = if ($Sudo) { 
+            "sudo bash -c `"$($Command -replace '"','\"')`"" 
+        } else { 
+            $Command 
+        }
+
+        # Muestra el estado si es necesario
+        if (-not $NoStatus) {
+            $displayCommand = if ($Command.Length -gt 50) { $Command.Substring(0, 47) + '...' } else { $Command }
+            Write-Status "Ejecutando: $displayCommand" -Type "INFO"
+        }
+        
+        # Construye y ejecuta el comando SSH
+        $sshCommand = "ssh $sshArgs $sshTarget `"$($fullCommand -replace '"','\"')`" 2>&1"
+        $output = Invoke-Expression -Command $sshCommand
+        
+        # Verifica el código de salida
+        if ($LASTEXITCODE -ne 0) {
+            $errorMessage = "Error en comando remoto (código $LASTEXITCODE): $output"
+            Write-Status $errorMessage -Type "ERROR"
+            throw $errorMessage
+        }
+        
+        return $output
+    }
+    catch {
+        Write-Status "Error al ejecutar comando: $($_.Exception.Message)" -Type ERROR
+        throw $_
+    }
+}
+
+# Función para copiar archivos
+function Copy-ToServer {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Source,
+        
+        [Parameter(Mandatory=$true)]
+        [string]$Destination,
+        
+        [Parameter()]
+        [string]$Description = "",
+        
+        [Parameter()]
+        [switch]$Recursive = $false
+    )
+    
+    $ErrorActionPreference = 'Stop'
+    
+    try {
+        if (-not [string]::IsNullOrEmpty($Description)) {
+            Write-Status $Description -Type "INFO"
+        }
+        
+        # Verificar si el archivo o directorio fuente existe
+        if (-not (Test-Path -Path $Source)) {
+            throw "La ruta de origen no existe: $Source"
+        }
+        
+        # Configuración de SCP
+        $scpArgs = @(
+            "-P", $SshPort,
+            "-o", "StrictHostKeyChecking=no",
+            "-o", "UserKnownHostsFile=/dev/null"
+        )
+        
+        if ($Recursive) {
+            $scpArgs += "-r"
+        }
+        
+        $scpArgs = $scpArgs -join ' '
+        
+        # Construir y ejecutar el comando SCP
+        $scpCommand = "scp $scpArgs `"$Source`" ${Username}@${ServerIP}:`"$Destination`" 2>&1"
+        Write-Status "Copiando $Source a ${ServerIP}:${Destination}" -Type "INFO"
+        
+        $output = Invoke-Expression -Command $scpCommand
+        
+        if ($LASTEXITCODE -ne 0) {
+            throw "Error al copiar $Source a $Destination. Detalles: $output"
+        }
+        
+        Write-Status "Copia completada: $Source -> ${ServerIP}:${Destination}" -Type "SUCCESS"
+    }
+    catch {
+        Write-Status "Error en Copy-ToServer: $($_.Exception.Message)" -Type "ERROR"
+        throw $_
+    }
+}
+
+# Función para instalar dependencias en el servidor remoto
+function Install-Dependencies {
+    Write-Status "Actualizando paquetes del sistema..." -Type "BACKEND"
+    Invoke-RemoteCommand -Command "apt-get update && apt-get upgrade -y" -Sudo
+    
+    Write-Status "Instalando dependencias..." -Type "BACKEND"
+    Invoke-RemoteCommand -Command "apt-get install -y docker.io docker-compose nginx" -Sudo
+    
+    # Agregar usuario al grupo docker si no está ya agregado
+    Write-Status "Configurando permisos de Docker..." -Type "BACKEND"
+    Invoke-RemoteCommand -Command "usermod -aG docker $Username" -Sudo
+}
+
+# Función para configurar Nginx
+function Configure-Nginx {
+    Write-Status "Configurando Nginx..." -Type "BACKEND"
+    
+    $nginxConfig = @"
+server {
+    listen 80;
+    server_name $Domain;
+    
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade `$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host `$host;
+        proxy_cache_bypass `$http_upgrade;
+    }
+    
+    location /api/ {
+        proxy_pass http://localhost:8080/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade `$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host `$host;
+        proxy_cache_bypass `$http_upgrade;
+    }
+}
+"@
+    
+    # Crear configuración de Nginx
+    $tempFile = [System.IO.Path]::GetTempFileName()
+    $nginxConfig | Out-File -FilePath $tempFile -Encoding ASCII
+    
+    # Copiar configuración al servidor
+    Copy-ToServer -Source $tempFile -Destination "/tmp/nginx-cognitrack.conf" -Description "Copiando configuración de Nginx"
+    
+    # Mover al directorio de configuración de Nginx
+    Invoke-RemoteCommand -Command "sudo mv /tmp/nginx-cognitrack.conf /etc/nginx/sites-available/$Domain" -Sudo
+    Invoke-RemoteCommand -Command "sudo ln -sf /etc/nginx/sites-available/$Domain /etc/nginx/sites-enabled/" -Sudo
+    Invoke-RemoteCommand -Command "sudo nginx -t && sudo systemctl restart nginx" -Sudo
+    
+    # Limpiar archivo temporal
+    Remove-Item -Path $tempFile -Force
+}
+
+# Función para desplegar la aplicación
+function Deploy-Application {
+    # Crear directorio remoto si no existe
+    Invoke-RemoteCommand -Command "mkdir -p $RemoteDir"
+    
+    # Copiar archivos de la aplicación
+    $localPath = Join-Path -Path $PSScriptRoot -ChildPath ".." -Resolve
+    Copy-ToServer -Source "$localPath\*" -Destination $RemoteDir -Recursive -Description "Copiando archivos de la aplicación"
+    
+    # Construir y levantar los contenedores
+    Write-Status "Iniciando contenedores Docker..." -Type "DOCKER"
+    Invoke-RemoteCommand -Command "cd $RemoteDir && docker-compose up -d --build"
+    
+    # Verificar que los contenedores estén en ejecución
+    $containers = Invoke-RemoteCommand -Command "docker ps --format '{{.Names}} ({{.Status}})'"
+    Write-Status "Contenedores en ejecución:`n$containers" -Type "DOCKER"
+}
+
+# Función principal
+function Main {
+    try {
+        # Mostrar información del despliegue
+        Write-Host "`n=== INICIANDO PROCESO DE DESPLIEGUE COGNITRACK ===" -ForegroundColor Cyan
+        Write-Host "Servidor: ${ServerIP}:${SshPort}" -ForegroundColor Cyan
+        Write-Host "Usuario: $Username" -ForegroundColor Cyan
+        Write-Host "Directorio remoto: $RemoteDir" -ForegroundColor Cyan
+        Write-Host "Dominio: $Domain" -ForegroundColor Cyan
+        Write-Host "`n"
+        
+        # Verificar conexión con el servidor
+        Write-Status "Probando conexión con el servidor..." -Type "INFO"
+        $serverInfo = Invoke-RemoteCommand -Command "uname -a" -NoStatus
+        Write-Status "Conexión exitosa con: $serverInfo" -Type "SUCCESS"
+        
+        # Instalar dependencias
+        Install-Dependencies
+        
+        # Configurar Nginx
+        Configure-Nginx
+        
+        # Desplegar la aplicación
+        Deploy-Application
+        
+        # Mostrar resumen
+        Write-Host "`n=== DESPLIEGUE COMPLETADO CON ÉXITO ===" -ForegroundColor Green
+        Write-Host "URL de la aplicación: http://$Domain" -ForegroundColor Green
+        Write-Host "`n"
+    }
+    catch {
+        Write-Status "ERROR DURANTE EL DESPLIEGUE: $($_.Exception.Message)" -Type "ERROR"
+        Write-Status "Detalles: $($_.ScriptStackTrace)" -Type "ERROR"
+        exit 1
+    }
+    finally {
+        Write-Status "Proceso de despliegue finalizado" -Type "INFO"
+    }
+}
+
+
+# Ejecutar la función principal
+Main

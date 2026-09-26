@@ -1,0 +1,38 @@
+{
+  "ollamaBaseUrl": "http://192.168.0.104:11434",
+  "models": [
+    {
+      "model": "phi4-mini:3.8b-q4_K_M",
+      "title": "Phi4 Mini (Code)",
+      "provider": "ollama"
+    },
+    {
+      "model": "deepseek-coder:1.3b",
+      "title": "DeepSeek (Code)",
+      "provider": "ollama"
+    }
+  ],
+  "tabAutocompleteModel": {
+    "title": "DeepSeek (Code)",
+    "provider": "ollama",
+    "model": "deepseek-coder:1.3b"
+  },
+  "contextProviders": [
+    {
+      "name": "code",
+      "params": {}
+    },
+    {
+      "name": "docs",
+      "params": {}
+    },
+    {
+      "name": "diff",
+      "params": {}
+    },
+    {
+      "name": "terminal",
+      "params": {}
+    }
+  ]
+}

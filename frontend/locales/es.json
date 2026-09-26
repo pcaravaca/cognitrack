@@ -1,0 +1,373 @@
+{
+  "dashboard": {
+    "title": "Panel de Control",
+    "overview": "Vista General",
+    "serversConfigured": "servidores configurados",
+    "pauseRefresh": "Pausar actualización",
+    "resumeRefresh": "Reanudar actualización",
+    "noServersTitle": "No hay servidores configurados",
+    "noServersDescription": "Agrega tu primer servidor Ollama para comenzar a monitorear",
+    "addFirstServer": "Agregar Primer Servidor",
+    "memory": "Memoria",
+    "models": "Modelos",
+    "lastUpdate": "Última actualización",
+    "serverOffline": "Servidor fuera de línea"
+  },
+  
+  "clusterNodes": "Nodos del Clúster",
+  "scale": "Escalar",
+  "reduce": "Reducir",
+  "deployedModels": "Modelos Desplegados",
+  "node": "Nodo",
+  "cpuUsage": "Uso de CPU",
+  "memoryUsage": "Uso de Memoria",
+  "resourceUsage": "Uso de Recursos",
+  "memoryStatus": "Estado de Memoria",
+  "high": "Alto",
+  "normal": "Normal",
+  "critical": "Crítico",
+  "stable": "Estable",
+  
+  "nav": {
+    "dashboard": "Panel de Control",
+    "servers": "Servidores",
+    "serversManagement": "Administración de Servidores",
+    "settings": "Configuración",
+    "help": "Ayuda",
+    "profile": "Perfil",
+    "apiDocs": "API"
+  },
+  
+  "servers": {
+    "management": {
+      "title": "Administración de Servidores",
+      "subtitle": "Administra y monitorea servidores Ollama en tu red"
+    },
+    "actions": {
+      "discover": "Descubrir Servidores",
+      "add": "Agregar Servidor",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "test": "Probar Conexión"
+    },
+    "list": {
+      "title": "Servidores Ollama",
+      "count": "servidores",
+      "noModels": "Sin modelos"
+    },
+    "table": {
+      "status": "Estado",
+      "info": "Información del Servidor",
+      "models": "Modelos",
+      "proxyRoute": "Ruta del Proxy",
+      "active": "Activo",
+      "actions": "Acciones"
+    },
+    "status": {
+      "online": "En línea",
+      "offline": "Desconectado",
+      "unknown": "Desconocido"
+    },
+    "dialog": {
+      "addTitle": "Agregar Servidor Ollama",
+      "editTitle": "Editar Servidor Ollama"
+    },
+    "form": {
+      "name": "Nombre del Servidor",
+      "hostIp": "IP del Host",
+      "port": "Puerto",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Descripción opcional para el servidor",
+      "enabled": "Habilitado"
+    },
+    "validation": {
+      "nameRequired": "El nombre del servidor es requerido",
+      "nameMinLength": "El nombre debe tener al menos 3 caracteres",
+      "ipRequired": "La dirección IP es requerida",
+      "ipInvalid": "Formato de dirección IP inválido",
+      "portRequired": "El puerto es requerido",
+      "portRange": "El puerto debe estar entre 1 y 65535"
+    },
+    "delete": {
+      "title": "Eliminar Servidor",
+      "message": "¿Estás seguro de que quieres eliminar el servidor '{name}'? Esta acción no se puede deshacer."
+    },
+    "discovery": {
+      "scanning": "Escaneando Red",
+      "scanningMessage": "Buscando servidores Ollama en la red...",
+      "completed": "Descubrimiento Completado",
+      "foundServers": "Se encontraron {count} nuevos servidores",
+      "error": "Error de Descubrimiento"
+    }
+  },
+  
+  "landing": {
+    "subtitle": "Sistema de Monitoreo Multi-Plataforma para IA",
+    "featuresTitle": "Características Principales",
+    "featuresSubtitle": "Todo lo que necesitas para monitorear tu infraestructura Ollama",
+    "ctaSubtitle": "Accede a tu panel de control personalizado"
+  },
+  
+  "auth": {
+    "welcome": "Bienvenido a CogniTrack",
+    "loginMessage": "Ingresa tus credenciales para acceder al sistema",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "profile": "Perfil",
+    "changePassword": "Cambiar Contraseña",
+    "currentPassword": "Contraseña Actual",
+    "newPassword": "Nueva Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "passwordChanged": "Contraseña cambiada exitosamente",
+    "loginError": "Error de autenticación",
+    "invalidCredentials": "Credenciales incorrectas",
+    "sessionExpired": "Sesión expirada"
+  },
+  
+  "profile": {
+    "title": "Perfil de Usuario",
+    "subtitle": "Administra tu información personal y preferencias",
+    "personalInfo": "Información Personal",
+    "accountInfo": "Información de la Cuenta",
+    "preferences": "Preferencias",
+    "security": "Seguridad",
+    "name": "Nombre Completo",
+    "email": "Correo Electrónico",
+    "role": "Rol",
+    "lastLogin": "Último Inicio de Sesión",
+    "memberSince": "Miembro desde",
+    "language": "Idioma",
+    "theme": "Tema",
+    "notifications": "Notificaciones",
+    "changePassword": "Cambiar Contraseña",
+    "currentPassword": "Contraseña Actual",
+    "newPassword": "Nueva Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "admin": "Administrador",
+    "user": "Usuario"
+  },
+
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Configura los parámetros del sistema",
+    "general": "General",
+    "servers": "Servidores",
+    "monitoring": "Monitoreo",
+    "security": "Seguridad",
+    "database": "Base de Datos",
+    "systemName": "Nombre del Sistema",
+    "timezone": "Zona Horaria",
+    "dateFormat": "Formato de Fecha",
+    "autoRefresh": "Actualización Automática",
+    "refreshInterval": "Intervalo de Actualización",
+    "defaultTheme": "Tema por Defecto",
+    "apiTimeout": "Tiempo de Espera de API",
+    "connectionTimeout": "Tiempo de Espera de Conexión",
+    "retryAttempts": "Intentos de Reintento",
+    "logLevel": "Nivel de Log",
+    "enableMetrics": "Habilitar Métricas",
+    "metricsInterval": "Intervalo de Métricas",
+    "alertThreshold": "Umbral de Alertas",
+    "sessionTimeout": "Tiempo de Sesión",
+    "requireAuth": "Requerir Autenticación",
+    "passwordPolicySettings": "Política de Contraseñas",
+    "dbHost": "Host de Base de Datos",
+    "dbPort": "Puerto de BD",
+    "dbName": "Nombre de BD",
+    "dbUser": "Usuario de BD",
+    "connectionPool": "Pool de Conexiones",
+    "resetToDefault": "Restaurar por Defecto"
+  },
+
+  "apiDocs": {
+    "apiTitle": "Documentación de API",
+    "subtitle": "Documentación completa de la API REST de CogniTrack",
+    "overview": "Resumen",
+    "authenticationLabel": "Autenticación",
+    "endpointsLabel": "Endpoints",
+    "errorCodesLabel": "Códigos de Error",
+    "examples": "Ejemplos",
+    "testing": "Pruebas",
+    "serverEndpoints": "Endpoints de Servidores",
+    "metricsEndpoints": "Endpoints de Métricas",
+    "systemEndpoints": "Endpoints del Sistema",
+    "version": "Versión",
+    "baseUrl": "URL Base",
+    "response": "Respuesta",
+    "example": "Ejemplo",
+    "parameters": "Parámetros",
+    "paramName": "Nombre",
+    "paramType": "Tipo",
+    "paramRequiredStatus": "Requerido",
+    "paramDescription": "Descripción",
+    "yes": "Sí",
+    "apiSections": {
+      "title": "Secciones de API"
+    },
+    "introduction": {
+      "title": "Introducción",
+      "description": "CogniTrack proporciona una API REST completa para interactuar con el sistema de monitoreo. Esta API permite acceder a todas las funcionalidades del sistema de forma programática.",
+      "features": "Características Principales:",
+      "feature1": "Autenticación basada en tokens Bearer",
+      "feature2": "Respuestas en formato JSON",
+      "feature3": "Manejo de errores consistente",
+      "feature4": "Documentación interactiva con ejemplos"
+    },
+    "authenticationSection": {
+      "title": "Autenticación",
+      "description": "Todas las solicitudes a la API requieren autenticación mediante un token Bearer. Incluye el token en el encabezado Authorization de cada solicitud.",
+      "warning": "Nunca compartas tu token de API. Mantenlo seguro y renuévalo regularmente."
+    },
+    "endpointsSection": {
+      "system": {
+        "title": "Endpoints del Sistema",
+        "getMetrics": {
+          "description": "Obtiene las métricas actuales del sistema incluyendo CPU, memoria y uso de recursos."
+        }
+      },
+      "ollama": {
+        "title": "Endpoints de Ollama",
+        "getTags": {
+          "description": "Lista todos los modelos disponibles en el servidor Ollama especificado.",
+          "serverParam": "URL del servidor Ollama (ej: http://localhost:11434)"
+        },
+        "getMetrics": {
+          "description": "Obtiene métricas específicas del servidor Ollama incluyendo modelos cargados y uso de recursos."
+        }
+      }
+    },
+    "errorCodesSection": {
+      "title": "Códigos de Error",
+      "description": "La API utiliza códigos de estado HTTP estándar. Los errores incluyen un mensaje descriptivo en el cuerpo de la respuesta.",
+      "code": "Código",
+      "solution": "Solución"
+    },
+    "tester": {
+      "title": "Probador de API",
+      "description": "Prueba los endpoints de la API directamente desde esta documentación.",
+      "selectEndpoint": "Seleccionar Endpoint",
+      "test": "Probar"
+    }
+  },
+
+  "chat": {
+    "typeMessage": "Escribe tu mensaje",
+    "placeholder": "Pregunta algo al modelo...",
+    "send": "Enviar",
+    "clear": "Limpiar chat"
+  },
+
+  "help": {
+    "title": "Centro de Ayuda",
+    "subtitle": "Encuentra respuestas y aprende a usar CogniTrack",
+    "quickStart": "Buscar en la ayuda",
+    "tip": "Tip",
+    "note": "Nota",
+    "steps": "Pasos",
+    "sections": {
+      "title": "Secciones"
+    },
+    "gettingStarted": {
+      "title": "Primeros Pasos",
+      "description": "Aprende cómo configurar y usar CogniTrack para monitorear tus servidores Ollama.",
+      "step1": {
+        "title": "Configurar Servidor",
+        "description": "Agrega tu primer servidor Ollama al sistema",
+        "tip": "Asegúrate de que tu servidor Ollama esté ejecutándose antes de agregarlo"
+      },
+      "step2": {
+        "title": "Verificar Conexión",
+        "description": "Prueba la conexión con el servidor",
+        "tip": "Usa el botón 'Probar Conexión' para verificar que todo funcione correctamente"
+      },
+      "step3": {
+        "title": "Explorar Dashboard",
+        "description": "Navega por las métricas y estadísticas del servidor"
+      },
+      "step4": {
+        "title": "Configurar Alertas",
+        "description": "Establece umbrales para recibir notificaciones importantes"
+      }
+    },
+    "dashboard": {
+      "title": "Guía del Dashboard",
+      "description": "El Dashboard te proporciona una vista completa del estado de tus servidores Ollama.",
+      "overview": "Vista General",
+      "overviewDesc": "Monitorea todos tus servidores desde una sola pantalla",
+      "features": {
+        "realtime": "Tiempo Real",
+        "realtimeDesc": "Datos actualizados automáticamente cada pocos segundos",
+        "metrics": "Métricas",
+        "metricsDesc": "CPU, memoria y estadísticas de rendimiento",
+        "alerts": "Alertas",
+        "alertsDesc": "Notificaciones cuando algo requiere atención",
+        "models": "Modelos",
+        "modelsDesc": "Lista de modelos disponibles en cada servidor"
+      }
+    },
+    "servers": {
+      "title": "Administración de Servidores",
+      "description": "Gestiona todos tus servidores Ollama desde esta sección."
+    },
+    "monitoring": {
+      "title": "Monitoreo",
+      "description": "Sistema de monitoreo avanzado para supervisar el rendimiento y estado de tus servidores.",
+      "metrics": "Métricas",
+      "alerts": "Alertas",
+      "performance": "Rendimiento",
+      "metricsTitle": "Métricas Disponibles",
+      "metricsDesc": "CogniTrack recopila y muestra diversas métricas de rendimiento:",
+      "alertsTitle": "Sistema de Alertas",
+      "alertsDesc": "Configura alertas para ser notificado cuando algo requiere atención.",
+      "alertsNote": "Las alertas se pueden configurar con diferentes umbrales y métodos de notificación.",
+      "performanceTitle": "Análisis de Rendimiento",
+      "performanceDesc": "Analiza tendencias y patrones de rendimiento a lo largo del tiempo."
+    },
+    "troubleshooting": {
+      "title": "Solución de Problemas",
+      "description": "Guía para resolver problemas comunes con CogniTrack y servidores Ollama.",
+      "problem": "Problema",
+      "solution": "Solución"
+    },
+    "faq": {
+      "title": "Preguntas Frecuentes"
+    },
+    "support": {
+      "title": "Soporte",
+      "description": "¿Necesitas ayuda? Contacta con nuestro equipo de soporte.",
+      "email": "Email",
+      "sendEmail": "Enviar Email",
+      "github": "GitHub",
+      "viewRepo": "Ver Repositorio"
+    }
+  },
+
+  "common": {
+    "cancel": "Cancelar",
+    "add": "Agregar",
+    "update": "Actualizar",
+    "delete": "Eliminar",
+    "save": "Guardar",
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "warning": "Advertencia",
+    "info": "Información",
+    "reset": "Restablecer",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "test": "Probar",
+    "send": "Enviar",
+    "clear": "Limpiar",
+    "close": "Cerrar",
+    "edit": "Editar",
+    "view": "Ver",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "refresh": "Actualizar"
+  }
+}

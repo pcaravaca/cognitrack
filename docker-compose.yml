@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cognitrack-backend
+    environment:
+      - PORT=8081
+    networks:
+      - cognitrack-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: cognitrack-frontend
+    depends_on:
+      - backend
+    networks:
+      - cognitrack-network
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=production
+      - VITE_API_BASE_URL=/api
+      - VITE_BACKEND_URL=http://backend:8081
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: cognitrack-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./frontend/dist:/usr/share/nginx/html
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - cognitrack-network
+    restart: unless-stopped
+
+networks:
+  cognitrack-network:
+    driver: bridge

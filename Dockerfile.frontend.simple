@@ -1,0 +1,33 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install pnpm using npm (fallback method)
+RUN npm install -g pnpm
+
+# Copy package files
+COPY frontend/package*.json frontend/pnpm-lock.yaml ./
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile --silent
+
+# Copy source code
+COPY frontend/ .
+
+# Build the app
+RUN pnpm run build
+
+# Production stage with nginx
+FROM nginx:1.25-alpine
+
+# Copy built files from build stage
+COPY --from=0 /app/dist /usr/share/nginx/html
+
+# Copy nginx config
+COPY frontend/nginx/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 80
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,0 +1,8 @@
+# Ejemplo de configuración de servidores Ollama
+# Copia este archivo a ollama_servers.conf y modifica según tus servidores
+
+# Formato: dominio URL_del_servidor
+# cognitrack.local http://192.168.0.104:11434;
+# servidor2.example.com http://10.0.0.5:11434;
+
+# No hardcodear IPs, usar solo servidores configurados por el usuario

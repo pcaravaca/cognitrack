@@ -1,0 +1,32 @@
+# Script de despliegue completo para CogniTrack
+# Versión compatible con Windows PowerShell 5.1
+# Incluye frontend, backend y configuracion de Nginx
+# Version: 1.0.2
+
+# Verificar versión de PowerShell
+if ($PSVersionTable.PSVersion.Major -lt 5) {
+    Write-Host "[ERROR] Este script requiere Windows PowerShell 5.1 o superior." -ForegroundColor Red
+    exit 1
+}
+
+# Parámetros del script
+param (
+    [string]$ServerIP = $null,
+    [int]$SshPort = 22,
+    [string]$Username = "peter",
+    [string]$RemoteDir = "/var/www/cognitrack",
+    [string]$Domain = "cognitrack.local"
+)
+
+# Resto del script...
+# [El resto del contenido del script original va aquí]
+
+# Solo para propósitos de demostración
+Write-Host "Parámetros recibidos:" -ForegroundColor Cyan
+Write-Host "- ServerIP: $ServerIP"
+Write-Host "- SshPort: $SshPort"
+Write-Host "- Username: $Username"
+Write-Host "- RemoteDir: $RemoteDir"
+Write-Host "- Domain: $Domain"
+
+# Agrega el resto de las funciones y lógica del script original aquí...

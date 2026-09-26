@@ -1,0 +1,158 @@
+{
+  "clusterNodes": "Cluster Nodes",
+  "scale": "Scale",
+  "reduce": "Reduce",
+  "deployedModels": "Deployed Models",
+  "node": "Node",
+  "cpuUsage": "CPU Usage",
+  "memoryUsage": "Memory Usage",
+  "resourceUsage": "Resource Usage",
+  "memoryStatus": "Memory Status",
+  "high": "High",
+  "normal": "Normal",
+  "critical": "Critical",
+  "stable": "Stable",
+  
+  "dashboard": {
+    "title": "Dashboard",
+    "overview": "Overview",
+    "serversConfigured": "servers configured",
+    "pauseRefresh": "Pause refresh",
+    "resumeRefresh": "Resume refresh",
+    "noServersTitle": "No servers configured",
+    "noServersDescription": "Add your first Ollama server to start monitoring",
+    "addFirstServer": "Add First Server",
+    "memory": "Memory",
+    "models": "Models",
+    "lastUpdate": "Last update",
+    "serverOffline": "Server offline"
+  },
+  
+  "nav": {
+    "dashboard": "Dashboard",
+    "servers": "Servers",
+    "serversManagement": "Server Management",
+    "settings": "Settings",
+    "help": "Help"
+  },
+  
+  "servers": {
+    "management": {
+      "title": "Server Management",
+      "subtitle": "Manage and monitor Ollama servers on your network"
+    },
+    "actions": {
+      "discover": "Discover Servers",
+      "add": "Add Server",
+      "edit": "Edit",
+      "delete": "Delete",
+      "test": "Test Connection"
+    },
+    "list": {
+      "title": "Ollama Servers",
+      "count": "servers",
+      "noModels": "No models"
+    },
+    "table": {
+      "status": "Status",
+      "info": "Server Information",
+      "models": "Models",
+      "proxyRoute": "Proxy Route",
+      "active": "Active",
+      "actions": "Actions"
+    },
+    "status": {
+      "online": "Online",
+      "offline": "Offline",
+      "unknown": "Unknown"
+    },
+    "dialog": {
+      "addTitle": "Add Ollama Server",
+      "editTitle": "Edit Ollama Server"
+    },
+    "form": {
+      "name": "Server Name",
+      "hostIp": "Host IP",
+      "port": "Port",
+      "description": "Description",
+      "descriptionPlaceholder": "Optional server description",
+      "enabled": "Enabled"
+    },
+    "validation": {
+      "nameRequired": "Server name is required",
+      "nameMinLength": "Name must be at least 3 characters",
+      "ipRequired": "IP address is required",
+      "ipInvalid": "Invalid IP address format",
+      "portRequired": "Port is required",
+      "portRange": "Port must be between 1 and 65535"
+    },
+    "delete": {
+      "title": "Delete Server",
+      "message": "Are you sure you want to delete server '{name}'? This action cannot be undone."
+    },
+    "discovery": {
+      "scanning": "Scanning Network",
+      "scanningMessage": "Searching for Ollama servers on the network...",
+      "completed": "Discovery Completed",
+      "foundServers": "Found {count} new servers",
+      "error": "Discovery Error"
+    }
+  },
+  
+  "app": {
+    "footer": {
+      "copyright": "© 2025 CogniTrack. All rights reserved."
+    },
+    "common": {
+      "github": "GitHub",
+      "help": "Help"
+    }
+  },
+  
+  "landing": {
+    "subtitle": "Multi-Platform AI Monitoring System",
+    "featuresTitle": "Key Features",
+    "featuresSubtitle": "Everything you need to monitor your Ollama infrastructure",
+    "ctaSubtitle": "Access your personalized dashboard"
+  },
+  
+  "common": {
+    "cancel": "Cancel",
+    "login": "Login",
+    "add": "Add",
+    "update": "Update",
+    "delete": "Delete",
+    "save": "Save",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Information"
+  },
+  
+  "auth": {
+    "welcome": "Welcome to CogniTrack",
+    "loginMessage": "Enter your credentials to access the system",
+    "username": "Username",
+    "password": "Password",
+    "login": "Login",
+    "logout": "Logout",
+    "profile": "Profile",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "passwordChanged": "Password changed successfully",
+    "loginError": "Authentication error",
+    "invalidCredentials": "Invalid credentials",
+    "sessionExpired": "Session expired"
+  },
+  
+  "validation": {
+    "required": "This field is required",
+    "email": "Please enter a valid email",
+    "minLength": "Minimum length is {min} characters",
+    "maxLength": "Maximum length is {max} characters",
+    "passwordMismatch": "Passwords do not match"
+  }
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de conexión a Ollama</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            white-space: pre-wrap;
+            min-height: 100px;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>Prueba de conexión a Ollama</h1>
+    <div class="container">
+        <button id="testButton">Probar conexión</button>
+        <h3>Respuesta del servidor:</h3>
+        <div id="response">Presiona el botón para probar la conexión</div>
+    </div>
+
+    <script>
+        document.getElementById('testButton').addEventListener('click', async () => {
+            const responseElement = document.getElementById('response');
+            const apiUrl = '/api/tags';
+            
+            responseElement.innerHTML = `
+                <strong>URL de la API:</strong> ${apiUrl}<br>
+                <strong>Método:</strong> GET<br>
+                <strong>Obteniendo lista de modelos de Ollama...</strong>
+                <div id="responseData"></div>
+            `;
+            
+            console.log('Iniciando solicitud a:', apiUrl);
+            
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache',
+                        'Connection': 'keep-alive'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+
+                const data = await response.json();
+                responseElement.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                responseElement.innerHTML = `<strong>Error:</strong> ${error.message}\n\n<strong>Detalles:</strong> ${error.stack || 'No hay más detalles disponibles'}`;
+                console.error('Error en la solicitud:', error);
+            }
+        });
+    </script>
+</body>
+</html>

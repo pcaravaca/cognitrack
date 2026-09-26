@@ -1,0 +1,372 @@
+{
+  "dashboard": {
+    "title": "Dashboard",
+    "overview": "Overview",
+    "serversConfigured": "servers configured",
+    "pauseRefresh": "Pause refresh",
+    "resumeRefresh": "Resume refresh",
+    "noServersTitle": "No servers configured",
+    "noServersDescription": "Add your first Ollama server to start monitoring",
+    "addFirstServer": "Add First Server",
+    "memory": "Memory",
+    "models": "Models",
+    "lastUpdate": "Last update",
+    "serverOffline": "Server offline"
+  },
+  
+  "clusterNodes": "Cluster Nodes",
+  "scale": "Scale",
+  "reduce": "Reduce",
+  "deployedModels": "Deployed Models",
+  "node": "Node",
+  "cpuUsage": "CPU Usage",
+  "memoryUsage": "Memory Usage",
+  "resourceUsage": "Resource Usage",
+  "memoryStatus": "Memory Status",
+  "high": "High",
+  "normal": "Normal",
+  "critical": "Critical",
+  "stable": "Stable",
+  "nav": {
+    "dashboard": "Dashboard",
+    "servers": "Servers",
+    "serversManagement": "Servers Management",
+    "settings": "Settings",
+    "help": "Help",
+    "profile": "Profile",
+    "apiDocs": "API"
+  },
+  
+  "servers": {
+    "management": {
+      "title": "Servers Management",
+      "subtitle": "Manage and monitor Ollama servers on your network"
+    },
+    "actions": {
+      "discover": "Discover Servers",
+      "add": "Add Server",
+      "edit": "Edit",
+      "delete": "Delete",
+      "test": "Test Connection"
+    },
+    "list": {
+      "title": "Ollama Servers",
+      "count": "servers",
+      "noModels": "No models"
+    },
+    "table": {
+      "status": "Status",
+      "info": "Server Info",
+      "models": "Models",
+      "proxyRoute": "Proxy Route",
+      "active": "Active",
+      "actions": "Actions"
+    },
+    "status": {
+      "online": "Online",
+      "offline": "Offline",
+      "unknown": "Unknown"
+    },
+    "dialog": {
+      "addTitle": "Add Ollama Server",
+      "editTitle": "Edit Ollama Server"
+    },
+    "form": {
+      "name": "Server Name",
+      "hostIp": "Host IP",
+      "port": "Port",
+      "description": "Description",
+      "descriptionPlaceholder": "Optional description for the server",
+      "enabled": "Enabled"
+    },
+    "validation": {
+      "nameRequired": "Server name is required",
+      "nameMinLength": "Name must be at least 3 characters",
+      "ipRequired": "IP address is required",
+      "ipInvalid": "Invalid IP address format",
+      "portRequired": "Port is required",
+      "portRange": "Port must be between 1 and 65535"
+    },
+    "delete": {
+      "title": "Delete Server",
+      "message": "Are you sure you want to delete server '{name}'? This action cannot be undone."
+    },
+    "discovery": {
+      "scanning": "Scanning Network",
+      "scanningMessage": "Searching for Ollama servers on the network...",
+      "completed": "Discovery Completed",
+      "foundServers": "Found {count} new servers",
+      "error": "Discovery Error"
+    }
+  },
+  
+  "landing": {
+    "subtitle": "Multi-Platform AI Monitoring System",
+    "featuresTitle": "Key Features",
+    "featuresSubtitle": "Everything you need to monitor your Ollama infrastructure",
+    "ctaSubtitle": "Access your personalized control panel"
+  },
+  
+  "auth": {
+    "welcome": "Welcome to CogniTrack",
+    "loginMessage": "Enter your credentials to access the system",
+    "username": "Username",
+    "password": "Password",
+    "login": "Login",
+    "logout": "Logout",
+    "profile": "Profile",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "passwordChanged": "Password changed successfully",
+    "loginError": "Authentication error",
+    "invalidCredentials": "Invalid credentials",
+    "sessionExpired": "Session expired"
+  },
+  
+  "profile": {
+    "title": "User Profile",
+    "subtitle": "Manage your personal information and preferences",
+    "personalInfo": "Personal Information",
+    "accountInfo": "Account Information",
+    "preferences": "Preferences",
+    "security": "Security",
+    "name": "Full Name",
+    "email": "Email Address",
+    "role": "Role",
+    "lastLogin": "Last Login",
+    "memberSince": "Member Since",
+    "language": "Language",
+    "theme": "Theme",
+    "notifications": "Notifications",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "admin": "Administrator",
+    "user": "User"
+  },
+
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Configure system parameters",
+    "general": "General",
+    "servers": "Servers",
+    "monitoring": "Monitoring",
+    "security": "Security",
+    "database": "Database",
+    "systemName": "System Name",
+    "timezone": "Timezone",
+    "dateFormat": "Date Format",
+    "autoRefresh": "Auto Refresh",
+    "refreshInterval": "Refresh Interval",
+    "defaultTheme": "Default Theme",
+    "apiTimeout": "API Timeout",
+    "connectionTimeout": "Connection Timeout",
+    "retryAttempts": "Retry Attempts",
+    "logLevel": "Log Level",
+    "enableMetrics": "Enable Metrics",
+    "metricsInterval": "Metrics Interval",
+    "alertThreshold": "Alert Threshold",
+    "sessionTimeout": "Session Timeout",
+    "requireAuth": "Require Authentication",
+    "passwordPolicy": "Password Policy",
+    "dbHost": "Database Host",
+    "dbPort": "DB Port",
+    "dbName": "Database Name",
+    "dbUser": "DB User",
+    "connectionPool": "Connection Pool",
+    "resetToDefault": "Reset to Default"
+  },
+
+  "apiDocs": {
+    "title": "API Documentation",
+    "subtitle": "Complete CogniTrack REST API documentation",
+    "overview": "Overview",
+    "authenticationLabel": "Authentication",
+    "endpointsLabel": "Endpoints",
+    "errorCodesLabel": "Error Codes",
+    "examples": "Examples",
+    "testing": "Testing",
+    "serverEndpoints": "Server Endpoints",
+    "metricsEndpoints": "Metrics Endpoints",
+    "systemEndpoints": "System Endpoints",
+    "version": "Version",
+    "baseUrl": "Base URL",
+    "response": "Response",
+    "example": "Example",
+    "parameters": "Parameters",
+    "paramName": "Name",
+    "paramType": "Type",
+    "paramRequired": "Required",
+    "paramDescription": "Description",
+    "yes": "Yes",
+    "apiSections": {
+      "title": "API Sections"
+    },
+    "introduction": {
+      "title": "Introduction",
+      "description": "CogniTrack provides a comprehensive REST API for interacting with the monitoring system. This API allows programmatic access to all system functionalities.",
+      "features": "Key Features:",
+      "feature1": "Bearer token based authentication",
+      "feature2": "JSON format responses",
+      "feature3": "Consistent error handling",
+      "feature4": "Interactive documentation with examples"
+    },
+    "authenticationSection": {
+      "title": "Authentication",
+      "description": "All API requests require authentication using a Bearer token. Include the token in the Authorization header of each request.",
+      "warning": "Never share your API token. Keep it secure and renew it regularly."
+    },
+    "endpointsSection": {
+      "system": {
+        "title": "System Endpoints",
+        "getMetrics": {
+          "description": "Get current system metrics including CPU, memory, and resource usage."
+        }
+      },
+      "ollama": {
+        "title": "Ollama Endpoints",
+        "getTags": {
+          "description": "List all available models on the specified Ollama server.",
+          "serverParam": "Ollama server URL (e.g., http://localhost:11434)"
+        },
+        "getMetrics": {
+          "description": "Get Ollama-specific metrics including loaded models and resource usage."
+        }
+      }
+    },
+    "errorCodesSection": {
+      "title": "Error Codes",
+      "description": "The API uses standard HTTP status codes. Errors include a descriptive message in the response body.",
+      "code": "Code",
+      "solution": "Solution"
+    },
+    "tester": {
+      "title": "API Tester",
+      "description": "Test API endpoints directly from this documentation.",
+      "selectEndpoint": "Select Endpoint",
+      "test": "Test"
+    }
+  },
+
+  "chat": {
+    "typeMessage": "Type your message",
+    "placeholder": "Ask the model something...",
+    "send": "Send",
+    "clear": "Clear chat"
+  },
+  
+  "help": {
+    "title": "Help",
+    "subtitle": "Complete guide to using CogniTrack",
+    "search": "Search help",
+    "tip": "Tip",
+    "note": "Note",
+    "steps": "Steps",
+    "sections": {
+      "title": "Sections"
+    },
+    "gettingStarted": {
+      "title": "Getting Started",
+      "description": "Learn how to set up and use CogniTrack to monitor your Ollama servers.",
+      "step1": {
+        "title": "Configure Server",
+        "description": "Add your first Ollama server to the system",
+        "tip": "Make sure your Ollama server is running before adding it"
+      },
+      "step2": {
+        "title": "Verify Connection",
+        "description": "Test the connection to the server",
+        "tip": "Use the 'Test Connection' button to verify everything works correctly"
+      },
+      "step3": {
+        "title": "Explore Dashboard",
+        "description": "Navigate through server metrics and statistics"
+      },
+      "step4": {
+        "title": "Configure Alerts",
+        "description": "Set thresholds to receive important notifications"
+      }
+    },
+    "dashboard": {
+      "title": "Dashboard Guide",
+      "description": "The Dashboard provides you with a complete view of your Ollama servers status.",
+      "overview": "Overview",
+      "overviewDesc": "Monitor all your servers from a single screen",
+      "features": {
+        "realtime": "Real-time",
+        "realtimeDesc": "Data updated automatically every few seconds",
+        "metrics": "Metrics",
+        "metricsDesc": "CPU, memory and performance statistics",
+        "alerts": "Alerts",
+        "alertsDesc": "Notifications when something requires attention",
+        "models": "Models",
+        "modelsDesc": "List of available models on each server"
+      }
+    },
+    "servers": {
+      "title": "Server Management",
+      "description": "Manage all your Ollama servers from this section."
+    },
+    "monitoring": {
+      "title": "Monitoring",
+      "description": "Advanced monitoring system to supervise your servers performance and status.",
+      "metrics": "Metrics",
+      "alerts": "Alerts",
+      "performance": "Performance",
+      "metricsTitle": "Available Metrics",
+      "metricsDesc": "CogniTrack collects and displays various performance metrics:",
+      "alertsTitle": "Alert System",
+      "alertsDesc": "Configure alerts to be notified when something requires attention.",
+      "alertsNote": "Alerts can be configured with different thresholds and notification methods.",
+      "performanceTitle": "Performance Analysis",
+      "performanceDesc": "Analyze performance trends and patterns over time."
+    },
+    "troubleshooting": {
+      "title": "Troubleshooting",
+      "description": "Guide to solve common problems with CogniTrack and Ollama servers.",
+      "problem": "Problem",
+      "solution": "Solution"
+    },
+    "faq": {
+      "title": "FAQ"
+    },
+    "support": {
+      "title": "Support",
+      "description": "Need help? Contact our support team.",
+      "email": "Email",
+      "sendEmail": "Send Email",
+      "github": "GitHub",
+      "viewRepo": "View Repository"
+    }
+  },
+
+  "common": {
+    "cancel": "Cancel",
+    "add": "Add",
+    "update": "Update",
+    "delete": "Delete",
+    "save": "Save",
+    "login": "Login",
+    "logout": "Logout",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Information",
+    "reset": "Reset",
+    "copy": "Copy",
+    "copied": "Copied",
+    "test": "Test",
+    "send": "Send",
+    "clear": "Clear",
+    "close": "Close",
+    "edit": "Edit",
+    "view": "View",
+    "search": "Search",
+    "filter": "Filter",
+    "refresh": "Refresh"
+  }
+}
