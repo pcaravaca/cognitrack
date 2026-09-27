@@ -689,7 +689,7 @@ export default defineComponent({
     };
 
     const editServer = () => {
-      router.push(`/servers/${route.params.id}/edit`);
+      router.push(`/server/${route.params.id}/edit`);
     };
 
     const showDeleteDialog = () => {

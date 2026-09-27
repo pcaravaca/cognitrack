@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => {
 
   // URL del backend para proxy
   const backendUrl = env.VITE_BACKEND_URL ||
-    (process.env.NODE_ENV === 'production' ? `http://10.10.1.185:8081` : 'http://localhost:8081');
+    (process.env.NODE_ENV === 'production' ? `http://10.10.1.185:8081` : 'http://localhost:8080');
   
   // Configuración para manejar rutas de la API
   const proxyConfig = {
@@ -70,6 +70,7 @@ export default defineConfig(({ mode }) => {
       vue(),
       vuetify({
         autoImport: true,
+        styles: 'sass',
       }),
     ],
     resolve: {
@@ -105,9 +106,13 @@ export default defineConfig(({ mode }) => {
       outDir: 'dist',
       assetsDir: 'assets',
       sourcemap: true,
-      minify: 'terser',
+      minify: 'esbuild',
+    esbuild: {
+      treeShaking: false
+    },
       chunkSizeWarningLimit: 1000,
       rollupOptions: {
+        treeShaking: false,
         output: {
           manualChunks: {
             'vuetify': ['vuetify'],

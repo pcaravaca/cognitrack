@@ -439,6 +439,7 @@ const updateServer = async (server: Server) => {
 }
 
 const updateServerStats = async () => {
+  console.debug("helpers:", getCpuColor(0), getProgressColor(0), formatBytes(0));
   if (servers.value.length > 0) {
     try {
       await Promise.all(servers.value.map(async server => {
@@ -538,6 +539,8 @@ onUnmounted(() => {
     updateInterval.value = null
   }
 })
+// Evitar tree-shaking de funciones de utilidad
+defineExpose({ getCpuColor, getProgressColor, formatBytes });
 </script>
 
 <style scoped>

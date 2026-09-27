@@ -51,7 +51,32 @@ const pinia = createPinia()
 app.use(pinia)
 app.use(i18n)
 
-// Configuración del tema oscuro con colores apagados
+// Configuración del tema claro
+const lightTheme = {
+  dark: false,
+  colors: {
+    background: '#f5f5f5',
+    surface: '#FFFFFF',
+    'surface-variant': '#E8E8E8',
+    'on-surface': '#213547',
+    primary: '#1976D2',
+    'primary-darken-1': '#1565C0',
+    secondary: '#424242',
+    'secondary-darken-1': '#333333',
+    error: '#FF5252',
+    info: '#2196F3',
+    success: '#4CAF50',
+    warning: '#FFC107',
+    'on-primary': '#FFFFFF',
+    'on-secondary': '#FFFFFF',
+    'on-error': '#FFFFFF',
+    'on-info': '#FFFFFF',
+    'on-success': '#FFFFFF',
+    'on-warning': '#000000',
+  },
+}
+
+// Configuración del tema oscuro
 const darkTheme = {
   dark: true,
   colors: {
@@ -59,14 +84,14 @@ const darkTheme = {
     surface: '#1E1E1E',
     'surface-variant': '#2D2D2D',
     'on-surface': '#E0E0E0',
-    primary: '#7FB3D5',  // Azul apagado
+    primary: '#7FB3D5',
     'primary-darken-1': '#5D8FB8',
-    secondary: '#A0A0A0',  // Gris apagado
+    secondary: '#A0A0A0',
     'secondary-darken-1': '#7A7A7A',
-    error: '#CF6679',      // Rojo apagado
-    info: '#75C7FB',      // Azul claro apagado
-    success: '#81C784',   // Verde apagado
-    warning: '#FFB74D',   // Naranja apagado
+    error: '#CF6679',
+    info: '#75C7FB',
+    success: '#81C784',
+    warning: '#FFB74D',
     'on-primary': '#000000',
     'on-secondary': '#000000',
     'on-error': '#000000',
@@ -95,9 +120,10 @@ const vuetify = createVuetify({
   components,
   directives,
   theme: {
-    defaultTheme: 'darkTheme',
+    defaultTheme: 'dark',
     themes: {
-      darkTheme,
+      light: lightTheme,
+      dark: darkTheme,
     },
   },
   defaults: {

@@ -11,7 +11,7 @@ declare module 'axios' {
 
 // Configuración base de axios
 const api = axios.create({
-  baseURL: '/v1',
+  baseURL: '/api/v1',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -21,7 +21,10 @@ const api = axios.create({
 // Interceptor de peticiones - agregar token automáticamente
 api.interceptors.request.use(
   (config) => {
-    // No usar el store directamente en el interceptor para evitar problemas de ciclo de vida
+    // No inyectar token en endpoints de login/logout (enviarían token viejo inválido)
+    if (config.url?.includes('/auth/login') || config.url?.includes('/auth/logout')) {
+      return config
+    }
     const token = localStorage.getItem('cognitrack_token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`

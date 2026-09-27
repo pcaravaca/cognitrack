@@ -536,6 +536,14 @@ func main() {
 	http.HandleFunc("/api/v1/ollama/ps", psHandler)
 	http.HandleFunc("/api/v1/ollama/generate", generateHandler)
 
+	// Serve static files from frontend/dist
+	distDir := os.Getenv("DIST_DIR")
+	if distDir == "" {
+		distDir = "/mnt/d/Main Repo/cognitrack/frontend/dist"
+	}
+	fs := http.FileServer(http.Dir(distDir))
+	http.Handle("/", fs)
+
 	// Middleware CORS global
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		enableCORS(w, r)

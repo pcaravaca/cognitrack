@@ -107,9 +107,8 @@ html, body, #app {
   overflow: auto;
 }
 
-/* Reset de Vuetify */
+/* Vuetify theme backgrounds preserved — no transparent overrides */
 .v-application {
-  background: transparent !important;
   min-height: 100% !important;
   display: block !important;
 }
@@ -117,7 +116,6 @@ html, body, #app {
 .v-application--wrap {
   min-height: 100% !important;
   display: block !important;
-  background: transparent !important;
 }
 
 /* Contenido principal */
@@ -126,7 +124,6 @@ html, body, #app {
   --v-layout-bottom: 0 !important;
   --v-layout-left: 0 !important;
   --v-layout-right: 0 !important;
-  background: transparent !important;
   min-height: 100% !important;
   display: block !important;
   padding: 0 !important;
@@ -138,6 +135,5 @@ html, body, #app {
   display: block !important;
   padding: 0 !important;
   margin: 0 !important;
-  background: transparent !important;
 }
 </style>

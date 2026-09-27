@@ -314,7 +314,7 @@
                       <v-list-item 
                         v-for="(action, i) in [
                           { title: 'Actualizar', icon: 'mdi-refresh', action: () => refreshServer(server) },
-                          { title: 'Editar', icon: 'mdi-pencil', action: () => $router.push(`/servers/${server.id}/edit`) },
+                          { title: 'Editar', icon: 'mdi-pencil', action: () => $router.push(`/server/${server.id}/edit`) },
                           { title: 'Eliminar', icon: 'mdi-delete', color: 'error', action: () => confirmDeleteServer(server) }
                         ]" 
                         :key="i"
@@ -482,7 +482,7 @@
                   size="small"
                   :color="isServerActive(server) ? 'white' : 'primary'"
                   :variant="isServerActive(server) ? 'outlined' : 'flat'"
-                  :to="`/servers/${server.id}`"
+                  :to="`/server/${server.id}`"
                   class="text-none px-4"
                   rounded="lg"
                   :prepend-icon="isServerActive(server) ? 'mdi-arrow-right' : ''"
@@ -901,7 +901,7 @@ const handleServerSelect = (server: any) => {
     }
     
     // Navegar a la vista de detalles del servidor
-    router.push(`/servers/${server.id}`)
+    router.push(`/server/${server.id}`)
     
     // Mostrar notificación
     showNotification(`Conectado a ${server.name}`, 'success')
@@ -928,6 +928,15 @@ onUnmounted(() => {
 const hoveredServer = ref<string | null>(null);
 
 // Obtener color del estado del servidor
+// Formatear bytes a representación legible
+const formatBytes = (bytes: number): string => {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+};
+
 const getServerStatusColor = (server: any) => {
   if (!server.stats) return 'grey';
   if (server.stats.status === 'online') return 'success';
@@ -963,10 +972,25 @@ const getCpuLoadLevel = (usage: number) => {
 };
 
 // Obtener color de la memoria según el uso
+
+const getCpuColor = (usage: number): string => {
+  if (usage < 30) return 'success';
+  if (usage < 70) return 'warning';
+  return 'error';
+};
+
 const getMemoryColor = (usage: number) => {
   if (usage < 60) return 'primary';
   if (usage < 85) return 'warning';
   return 'error';
+};
+
+// Obtener color de la tarjeta del servidor según su estado
+const getServerCardColor = (server: any): string => {
+  if (server.status === 'online') return '#22c55e';
+  if (server.status === 'warning') return '#f59e0b';
+  if (server.status === 'error' || server.status === 'critical') return '#ef4444';
+  return '#6b7280';
 };
 
 // Formatear nombre del modelo
@@ -988,7 +1012,7 @@ const getModelIcon = (model: any) => {
 
 // Ver modelos del servidor
 const viewModels = (server: any) => {
-  router.push(`/servers/${server.id}?tab=models`);
+  router.push(`/server/${server.id}?tab=models`);
 };
 
 // Copiar al portapapeles
@@ -1103,7 +1127,6 @@ const confirmDeleteServer = (server: any) => {
   opacity: 0;
 }
 .v-main {
-  background-color: transparent !important;
   display: block !important;
   opacity: 1 !important;
 }

@@ -1,11 +1,8 @@
 @use 'vuetify/settings' as *;
 @use './settings' as *;
-
-// Resto del contenido...// Archivo principal de estilos - Versión limpia
-// Todas las importaciones y usos deben ir al principio
-@use 'vuetify/settings' as *;
-@use './settings' as *;
 @use './global' as *;
+
+// Variables de tema (respaldan las de settings.scss)
 
 // Variables de tema
 :root {
