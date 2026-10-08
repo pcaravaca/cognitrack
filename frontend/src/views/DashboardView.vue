@@ -16,16 +16,6 @@
 
     <!-- Dashboard content -->
     <div v-if="!showLoading && hasServers" key="dashboard">
-      <!-- Server summary card -->
-      <v-card class="mb-4" flat>
-        <v-card-title>Servidores</v-card-title>
-        <v-card-text>
-          <p v-for="server in servers" :key="server.id" class="py-2">
-            {{ server.name }} - {{ server.status }}
-          </p>
-        </v-card-text>
-      </v-card>
-
       <!-- Stats grid: 4 columnas en desktop -->
       <v-row class="mt-2">
         <!-- CPU Usage Card -->

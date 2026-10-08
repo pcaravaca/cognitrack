@@ -7,7 +7,6 @@
     <v-toolbar-title class="font-weight-bold d-flex align-center">
       <router-link to="/dashboard" class="text-white text-decoration-none d-flex align-center">
         <img src="/cognitrack-logo.svg" alt="CogniTrack Logo" class="mr-2" style="width: 32px; height: 32px;">
-        <v-app-bar-nav-icon @click="toggleDrawer" />
         CogniTrack
       </router-link>
     </v-toolbar-title>
