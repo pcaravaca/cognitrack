@@ -107,15 +107,14 @@ html, body, #app {
   overflow: auto;
 }
 
-/* Vuetify theme backgrounds preserved — no transparent overrides */
+/* Vuetify app layout — column para preservar grid */
 .v-application {
   min-height: 100% !important;
-  display: flex !important;
+  display: block !important;
 }
 
 .v-application--wrap {
   min-height: 100% !important;
-  display: flex !important;
 }
 
 /* Contenido principal — layout normal para que Vuetify grid funcione */
