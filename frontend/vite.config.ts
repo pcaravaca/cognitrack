@@ -107,12 +107,8 @@ export default defineConfig(({ mode }) => {
       assetsDir: 'assets',
       sourcemap: true,
       minify: 'esbuild',
-    esbuild: {
-      treeShaking: false
-    },
       chunkSizeWarningLimit: 1000,
       rollupOptions: {
-        treeShaking: false,
         output: {
           manualChunks: {
             'vuetify': ['vuetify'],

@@ -1,5 +1,5 @@
 <template>
-  <aside class="sidebar" :class="{ 'collapsed': !drawerOpen }">
+  <aside class="app-sidebar" :class="{ 'collapsed': !drawerOpen }">
     <!-- Sidebar header -->
     <div v-if="drawerOpen" class="sidebar-header">
       <v-list-item
@@ -149,28 +149,6 @@ const settingsItems = [
 </script>
 
 <style scoped>
-.sidebar {
-  width: 256px;
-  min-width: 256px;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: var(--v-surface-base, #1e1e1e);
-  border-right: 1px solid var(--v-divider, rgba(0,0,0,0.12));
-  overflow: hidden;
-  transition: all 0.3s ease;
-  z-index: 20;
-}
-
-.sidebar.collapsed {
-  width: 64px;
-  min-width: 64px;
-}
-
-.sidebar.collapsed .sidebar-header {
-  display: none;
-}
-
 .sidebar-header {
   padding: 16px;
   background: linear-gradient(45deg, var(--v-primary-base), var(--v-primary-darken-2));

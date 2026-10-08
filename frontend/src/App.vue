@@ -101,35 +101,74 @@ html, body, #app {
   overflow: hidden;
 }
 
+/* Contenedor principal flex */
 .app-container {
   display: flex;
-  width: 100vw;
   height: 100vh;
+  width: 100vw;
   overflow: hidden;
 }
 
+/* Sidebar - ocupa ancho fijo */
+.app-sidebar {
+  flex-shrink: 0;
+  width: 256px;
+  min-width: 256px;
+  background: var(--v-surface-base, #1e1e1e);
+  border-right: 1px solid var(--v-divider, rgba(0,0,0,0.12));
+  overflow: hidden;
+}
+
+.app-sidebar.collapsed {
+  width: 64px;
+  min-width: 64px;
+}
+
+/* Contenido con navbar y main */
 .app-content {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  margin-left: 0;
-  transition: margin-left 0.3s ease;
 }
 
-.app-content.sidebar-open {
-  margin-left: 256px;
+/* Navbar */
+.app-navbar {
+  flex-shrink: 0;
+  height: 64px;
 }
 
+/* Main content - el área que puede hacer scroll */
 .main-content {
   flex: 1;
   overflow-y: auto;
-  padding: 12px;
+  padding: 16px;
+  min-height: 0;
+}
+
+/* Sidebar colapsado - ajustar ancho del main content */
+.app-sidebar.collapsed ~ .app-content .main-content {
+  width: calc(100% - 64px);
+}
+
+/* Sidebar abierto - ajustar ancho del main content */
+.app-sidebar:not(.collapsed) ~ .app-content .main-content {
+  width: calc(100% - 256px);
 }
 
 @media (max-width: 959px) {
-  .app-content.sidebar-open {
-    margin-left: 0;
+  .app-container {
+    flex-direction: column;
+  }
+  
+  .app-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+  }
+  
+  .main-content {
+    width: 100% !important;
   }
 }
 </style>

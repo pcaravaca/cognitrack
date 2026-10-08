@@ -2,7 +2,6 @@
   <div class="landing-page">
     <!-- Modern Hero Section -->
     <section class="hero-section">
-      <div class="hero-background"></div>
       <v-container class="fill-height hero-container" fluid>
         <v-row align="center" justify="center" class="fill-height">
           <v-col cols="12" lg="8" xl="6" class="text-center">
@@ -63,15 +62,15 @@
             </div>
           </v-col>
           
-          <v-col cols="12" md="6" class="d-none d-md-block">
+          <v-col cols="12" md="6" class="d-none d-md-block" style="padding: 0; margin: 0;">
             <div class="hero-animation">
               <div class="monitoring-dashboard-preview">
-                <v-card class="preview-card elevation-12" outlined>
+                <v-card class="preview-card elevation-12" outlined style="margin: 0; padding: 0;">
                   <v-card-title class="justify-center">
                     <v-icon left color="success">mdi-monitor-dashboard</v-icon>
                     Dashboard Preview
                   </v-card-title>
-                  <v-card-text>
+                  <v-card-text style="padding: 24px;">
                     <div class="metrics-preview">
                       <div class="metric-item" v-for="metric in previewMetrics" :key="metric.label">
                         <v-progress-circular
@@ -473,20 +472,29 @@ methods: {
   min-height: 100vh;
   background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
   color: white;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="300" r="100" fill="url(%23a)"/><circle cx="800" cy="200" r="150" fill="url(%23a)"/><circle cx="600" cy="700" r="120" fill="url(%23a)"/></svg>') center/cover no-repeat;
-    pointer-events: none;
-    z-index: 1;
-  }
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+}
+
+.hero-container {
+  padding: 0 !important;
+  margin: 0 !important;
+  flex: 1;
+}
+
+.fill-height {
+  height: 100% !important;
+  min-height: 100vh;
 }
 
 .hero-title {
@@ -559,11 +567,22 @@ methods: {
   animation: float 6s ease-in-out infinite;
 }
 
+.monitoring-dashboard-preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  width: 100%;
+  padding: 0 16px;
+}
+
 .preview-card {
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(15px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+  max-width: 500px;
 }
 
 .metrics-preview {
