@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-6">
+  <v-container fluid class="pa-4">
     <!-- Header -->
     <div class="d-flex justify-space-between align-center mb-4">
       <h1 class="text-h5 font-weight-bold">Dashboard</h1>
@@ -26,113 +26,105 @@
         </v-card-text>
       </v-card>
 
-      <!-- Stats grid - Fixed stat cards for visual completeness -->
-      <v-row class="mt-4 g-4" no-gutter>
+      <!-- Stats grid: 4 columnas en desktop -->
+      <v-row class="mt-2">
         <!-- CPU Usage Card -->
         <v-col cols="12" sm="6" md="3">
-          <v-card class="stat-card pa-4" elevation="6" rounded="lg">
-            <v-card-text class="pa-3">
-              <div class="d-flex align-center justify-space-between mb-3">
-                <div>
-                  <p class="text-caption text-medium-emphasis mb-1">USO DE CPU</p>
-                  <h3 class="text-h4 font-weight-bold">{{ (currentServer?.stats?.cpu?.usage || 45).toFixed(0) }}%</h3>
-                </div>
-                <v-avatar color="primary" size="56" variant="tonal">
-                  <v-icon size="30">mdi-cpu-64-bit</v-icon>
-                </v-avatar>
+          <v-card class="pa-4 d-flex flex-column" elevation="6" rounded="lg" height="100%">
+            <div class="d-flex align-center justify-space-between mb-3">
+              <div>
+                <p class="text-caption text-medium-emphasis mb-1">USO DE CPU</p>
+                <h3 class="text-h4 font-weight-bold">{{ (currentServer?.stats?.cpu?.usage || 45).toFixed(0) }}%</h3>
               </div>
-              <v-progress-linear
-                :model-value="currentServer?.stats?.cpu?.usage || 45"
-                color="primary"
-                height="8"
-                rounded
-                class="mb-2"
-              />
-              <p class="text-caption text-medium-emphasis">
-                {{ currentServer?.stats?.cpu?.model || 'Intel(R) Core(TM) i7-10700K' }}
-              </p>
-            </v-card-text>
+              <v-avatar color="primary" size="56" variant="tonal">
+                <v-icon size="30">mdi-cpu-64-bit</v-icon>
+              </v-avatar>
+            </div>
+            <v-progress-linear
+              :model-value="currentServer?.stats?.cpu?.usage || 45"
+              color="primary"
+              height="8"
+              rounded
+              class="mb-2"
+            />
+            <p class="text-caption text-medium-emphasis">
+              {{ currentServer?.stats?.cpu?.model || 'Intel(R) Core(TM) i7-10700K' }}
+            </p>
           </v-card>
         </v-col>
 
         <!-- Memory Usage Card -->
         <v-col cols="12" sm="6" md="3">
-          <v-card class="stat-card pa-4" elevation="6" rounded="lg">
-            <v-card-text class="pa-3">
-              <div class="d-flex align-center justify-space-between mb-3">
-                <div>
-                  <p class="text-caption text-medium-emphasis mb-1">MEMORIA RAM</p>
-                  <h3 class="text-h4 font-weight-bold">{{ formatBytes((currentServer?.stats?.memory?.used || 12 * 1024 * 1024 * 1024)) }}</h3>
-                </div>
-                <v-avatar color="error" size="56" variant="tonal">
-                  <v-icon size="30">mdi-memory</v-icon>
-                </v-avatar>
+          <v-card class="pa-4 d-flex flex-column" elevation="6" rounded="lg" height="100%">
+            <div class="d-flex align-center justify-space-between mb-3">
+              <div>
+                <p class="text-caption text-medium-emphasis mb-1">MEMORIA RAM</p>
+                <h3 class="text-h4 font-weight-bold">{{ formatBytes((currentServer?.stats?.memory?.used || 12 * 1024 * 1024 * 1024)) }}</h3>
               </div>
-              <v-progress-linear
-                :model-value="memoryUsagePercentage"
-                :color="getMemoryColor(memoryUsagePercentage)"
-                height="8"
-                rounded
-                class="mb-2"
-              />
-              <p class="text-caption text-medium-emphasis">
-                {{ memoryUsagePercentage.toFixed(1) }}% de {{ formatBytes(currentServer?.stats?.memory?.total || 32 * 1024 * 1024 * 1024) }}
-              </p>
-            </v-card-text>
+              <v-avatar color="error" size="56" variant="tonal">
+                <v-icon size="30">mdi-memory</v-icon>
+              </v-avatar>
+            </div>
+            <v-progress-linear
+              :model-value="memoryUsagePercentage"
+              :color="getMemoryColor(memoryUsagePercentage)"
+              height="8"
+              rounded
+              class="mb-2"
+            />
+            <p class="text-caption text-medium-emphasis">
+              {{ memoryUsagePercentage.toFixed(1) }}% de {{ formatBytes(currentServer?.stats?.memory?.total || 32 * 1024 * 1024 * 1024) }}
+            </p>
           </v-card>
         </v-col>
 
         <!-- Disk Usage Card -->
         <v-col cols="12" sm="6" md="3">
-          <v-card class="stat-card pa-4" elevation="6" rounded="lg">
-            <v-card-text class="pa-3">
-              <div class="d-flex align-center justify-space-between mb-3">
-                <div>
-                  <p class="text-caption text-medium-emphasis mb-1">USO DE DISCO</p>
-                  <h3 class="text-h4 font-weight-bold">{{ currentServer?.stats?.disk?.usage || 25 }}%</h3>
-                </div>
-                <v-avatar color="success" size="56" variant="tonal">
-                  <v-icon size="30">mdi-harddisk</v-icon>
-                </v-avatar>
+          <v-card class="pa-4 d-flex flex-column" elevation="6" rounded="lg" height="100%">
+            <div class="d-flex align-center justify-space-between mb-3">
+              <div>
+                <p class="text-caption text-medium-emphasis mb-1">USO DE DISCO</p>
+                <h3 class="text-h4 font-weight-bold">{{ currentServer?.stats?.disk?.usage || 25 }}%</h3>
               </div>
-              <v-progress-linear
-                :model-value="currentServer?.stats?.disk?.usage || 25"
-                color="success"
-                height="8"
-                rounded
-                class="mb-2"
-              />
-              <p class="text-caption text-medium-emphasis">
-                {{ formatBytes((currentServer?.stats?.disk?.used || 250 * 1024 * 1024 * 1024)) }} / {{ formatBytes(currentServer?.stats?.disk?.total || 1000 * 1024 * 1024 * 1024) }}
-              </p>
-            </v-card-text>
+              <v-avatar color="success" size="56" variant="tonal">
+                <v-icon size="30">mdi-harddisk</v-icon>
+              </v-avatar>
+            </div>
+            <v-progress-linear
+              :model-value="currentServer?.stats?.disk?.usage || 25"
+              color="success"
+              height="8"
+              rounded
+              class="mb-2"
+            />
+            <p class="text-caption text-medium-emphasis">
+              {{ formatBytes((currentServer?.stats?.disk?.used || 250 * 1024 * 1024 * 1024)) }} / {{ formatBytes(currentServer?.stats?.disk?.total || 1000 * 1024 * 1024 * 1024) }}
+            </p>
           </v-card>
         </v-col>
 
         <!-- Models Card -->
         <v-col cols="12" sm="6" md="3">
-          <v-card class="stat-card pa-4" elevation="6" rounded="lg">
-            <v-card-text class="pa-3">
-              <div class="d-flex align-center justify-space-between mb-3">
-                <div>
-                  <p class="text-caption text-medium-emphasis mb-1">MODELOS IA</p>
-                  <h3 class="text-h4 font-weight-bold">{{ currentServer?.stats?.models?.length || 1 }}</h3>
-                </div>
-                <v-avatar color="success" size="56" variant="tonal">
-                  <v-icon size="30">mdi-robot</v-icon>
-                </v-avatar>
+          <v-card class="pa-4 d-flex flex-column" elevation="6" rounded="lg" height="100%">
+            <div class="d-flex align-center justify-space-between mb-3">
+              <div>
+                <p class="text-caption text-medium-emphasis mb-1">MODELOS IA</p>
+                <h3 class="text-h4 font-weight-bold">{{ currentServer?.stats?.models?.length || 1 }}</h3>
               </div>
-              <v-chip-group class="mt-2">
-                <v-chip
-                  v-for="model in (currentServer?.stats?.models || [{ name: 'llama2:latest' }]).slice(0, 2)"
-                  :key="model.name"
-                  size="small"
-                  variant="tonal"
-                >
-                  {{ model.name }}
-                </v-chip>
-              </v-chip-group>
-            </v-card-text>
+              <v-avatar color="success" size="56" variant="tonal">
+                <v-icon size="30">mdi-robot</v-icon>
+              </v-avatar>
+            </div>
+            <v-chip-group class="mt-2">
+              <v-chip
+                v-for="model in (currentServer?.stats?.models || [{ name: 'llama2:latest' }]).slice(0, 2)"
+                :key="model.name"
+                size="small"
+                variant="tonal"
+              >
+                {{ model.name }}
+              </v-chip>
+            </v-chip-group>
           </v-card>
         </v-col>
       </v-row>
@@ -242,29 +234,3 @@ onMounted(async () => {
   }
 })
 </script>
-
-<style scoped>
-/* Stat card fills its column (stat-card class IS in this component's template) */
-.stat-card {
-  display: flex;
-  flex-direction: column;
-  height: 100% !important;
-}
-</style>
-
-<style>
-/* v-col is rendered by Vuetify's v-col COMPONENT, not this component's template.
-   Scoped CSS data-v-xxx attribute on parent won't reach v-col's rendered div.
-   Must use GLOBAL CSS to target Vuetify's child component DOM. */
-.v-col {
-  display: flex !important;
-  align-items: stretch !important;
-}
-
-/* v-card-text is inside Vuetify's v-card component — same scoping issue */
-.stat-card .v-card-text {
-  flex-grow: 1 !important;
-  display: flex !important;
-  flex-direction: column !important;
-}
-</style>

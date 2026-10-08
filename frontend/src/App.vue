@@ -14,7 +14,7 @@
 
     <v-main class="pa-6">
       <router-view v-slot="{ Component }">
-        <component :is="Component" style="height: 100%; width: 100%;" />
+        <component :is="Component" />
       </router-view>
     </v-main>
 
@@ -107,28 +107,11 @@ html, body, #app {
   overflow: auto;
 }
 
-/* Vuetify app layout — column para preservar grid */
 .v-application {
   min-height: 100% !important;
-  display: block !important;
 }
 
 .v-application--wrap {
   min-height: 100% !important;
-}
-
-/* Contenido principal — dejar que Vuetify calcule el margen del drawer */
-.v-main {
-  --v-layout-top: 0 !important;
-  --v-layout-bottom: 0 !important;
-  --v-layout-right: 0 !important;
-  min-height: 100vh !important;
-  padding: 24px !important;
-  /* margin-left set by sidebar drawer width on desktop */
-}
-
-.v-main__wrap {
-  min-height: 100vh !important;
-  padding: 0 !important;
 }
 </style>
