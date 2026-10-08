@@ -27,11 +27,11 @@
       </v-card>
 
       <!-- Stats grid - Fixed stat cards for visual completeness -->
-      <v-row>
+      <v-row class="mt-4 g-4" no-gutter>
         <!-- CPU Usage Card -->
         <v-col cols="12" sm="6" md="3">
-          <v-card class="pa-4" elevation="6" rounded="lg">
-            <v-card-text class="pa-5">
+          <v-card class="stat-card pa-4" elevation="6" rounded="lg" height="200">
+            <v-card-text class="pa-3">
               <div class="d-flex align-center justify-space-between mb-3">
                 <div>
                   <p class="text-caption text-medium-emphasis mb-1">USO DE CPU</p>
@@ -57,8 +57,8 @@
 
         <!-- Memory Usage Card -->
         <v-col cols="12" sm="6" md="3">
-          <v-card class="pa-4" elevation="6" rounded="lg">
-            <v-card-text class="pa-5">
+          <v-card class="stat-card pa-4" elevation="6" rounded="lg" height="200">
+            <v-card-text class="pa-3">
               <div class="d-flex align-center justify-space-between mb-3">
                 <div>
                   <p class="text-caption text-medium-emphasis mb-1">MEMORIA RAM</p>
@@ -84,8 +84,8 @@
 
         <!-- Disk Usage Card -->
         <v-col cols="12" sm="6" md="3">
-          <v-card class="pa-4" elevation="6" rounded="lg">
-            <v-card-text class="pa-5">
+          <v-card class="stat-card pa-4" elevation="6" rounded="lg" height="200">
+            <v-card-text class="pa-3">
               <div class="d-flex align-center justify-space-between mb-3">
                 <div>
                   <p class="text-caption text-medium-emphasis mb-1">USO DE DISCO</p>
@@ -111,8 +111,8 @@
 
         <!-- Models Card -->
         <v-col cols="12" sm="6" md="3">
-          <v-card class="pa-4" elevation="6" rounded="lg">
-            <v-card-text class="pa-5">
+          <v-card class="stat-card pa-4" elevation="6" rounded="lg" height="200">
+            <v-card-text class="pa-3">
               <div class="d-flex align-center justify-space-between mb-3">
                 <div>
                   <p class="text-caption text-medium-emphasis mb-1">MODELOS IA</p>
@@ -247,5 +247,19 @@ onMounted(async () => {
 /* Ensure the card has proper visibility */
 .v-card {
   background-color: rgba(var(--v-theme-surface), 1) !important;
+}
+
+/* Uniform stat card heights for proper grid alignment */
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  height: 200px;
+}
+
+.stat-card .v-card-text {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 </style>
