@@ -209,6 +209,19 @@ const handleResize = () => {
   color: white;
 }
 
+/* Explicit drawer width for desktop — ensures v-main margin calculation works */
+.v-navigation-drawer {
+  width: 256px !important;
+  max-width: 256px !important;
+}
+
+/* Ensure main content is offset by drawer width on desktop */
+@media (min-width: 960px) {
+  .v-main {
+    margin-left: 256px !important;
+  }
+}
+
 .active-menu-item {
   background-color: rgba(var(--v-primary-base), 0.1);
   border-left: 3px solid var(--v-primary-base);

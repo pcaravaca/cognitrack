@@ -117,20 +117,18 @@ html, body, #app {
   min-height: 100% !important;
 }
 
-/* Contenido principal — layout normal para que Vuetify grid funcione */
+/* Contenido principal — dejar que Vuetify calcule el margen del drawer */
 .v-main {
   --v-layout-top: 0 !important;
   --v-layout-bottom: 0 !important;
-  --v-layout-left: 0 !important;
   --v-layout-right: 0 !important;
   min-height: 100vh !important;
-  padding: 0 !important;
-  margin: 0 !important;
+  padding: 24px !important;
+  /* margin-left set by sidebar drawer width on desktop */
 }
 
 .v-main__wrap {
   min-height: 100vh !important;
   padding: 0 !important;
-  margin: 0 !important;
 }
 </style>
