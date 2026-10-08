@@ -345,14 +345,6 @@
 </template>
 
 <script setup>
-// Definir componentes
-const components = {
-  VDataTable
-}
-
-defineExpose({
-  components
-})
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useServersStore } from '@/stores/servers'
@@ -374,6 +366,7 @@ const testingConnection = ref(null)
 const editingServer = ref(null)
 const savingServer = ref(false)
 const deletingServer = ref(false)
+const validForm = ref(false)
 const serverForm = ref({
   id: null,
   name: '',
