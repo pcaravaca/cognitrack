@@ -12,7 +12,7 @@
       v-model="drawer"
     />
 
-    <v-main style="min-height: 100vh; display: block; padding: 0;">
+    <v-main style="min-height: 100vh; padding: 0;">
       <router-view v-slot="{ Component }">
         <component :is="Component" style="height: 100%; width: 100%;" />
       </router-view>
@@ -110,29 +110,29 @@ html, body, #app {
 /* Vuetify theme backgrounds preserved — no transparent overrides */
 .v-application {
   min-height: 100% !important;
-  display: block !important;
+  display: flex !important;
 }
 
 .v-application--wrap {
   min-height: 100% !important;
-  display: block !important;
+  display: flex !important;
 }
 
-/* Contenido principal */
+/* Contenido principal — flex para que Vuetify layout funcione */
 .v-main {
   --v-layout-top: 0 !important;
   --v-layout-bottom: 0 !important;
   --v-layout-left: 0 !important;
   --v-layout-right: 0 !important;
   min-height: 100% !important;
-  display: block !important;
+  display: flex !important;
   padding: 0 !important;
   margin: 0 !important;
 }
 
 .v-main__wrap {
   min-height: 100% !important;
-  display: block !important;
+  display: flex !important;
   padding: 0 !important;
   margin: 0 !important;
 }
