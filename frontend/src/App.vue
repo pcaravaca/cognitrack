@@ -55,7 +55,7 @@ const drawer = ref(true)
 const isMobile = computed(() => mobile.value)
 
 const isLandingPage = computed(() => {
-  return route.name === 'landing' || route.path === '/landing'
+  return route.name === 'landing' || route.path === '/landing' || route.path === '/'
 })
 
 const snackbar = ref(false)
