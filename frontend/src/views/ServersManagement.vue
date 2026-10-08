@@ -370,6 +370,10 @@ const showAddDialog = ref(false)
 const showEditDialog = ref(false)
 const showDeleteDialog = ref(false)
 const activeServerId = ref(null)
+const testingConnection = ref(null)
+const editingServer = ref(null)
+const savingServer = ref(false)
+const deletingServer = ref(false)
 const serverForm = ref({
   id: null,
   name: '',
