@@ -5,6 +5,7 @@ import { createApp } from 'vue'
 // 2. Importar estilos de Vuetify (debe ir antes de Tailwind)
 // Importar CSS directamente (NO dentro de .sass porque @import de CSS en .sass no funciona en Vite 4)
 import 'vuetify/dist/vuetify.css'
+import '@mdi/font/css/materialdesignicons.css'
 import './styles/vuetify.sass'
 
 // 2b. Importar estilos de Tailwind CSS

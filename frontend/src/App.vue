@@ -118,21 +118,19 @@ html, body, #app {
   display: flex !important;
 }
 
-/* Contenido principal — flex para que Vuetify layout funcione */
+/* Contenido principal — layout normal para que Vuetify grid funcione */
 .v-main {
   --v-layout-top: 0 !important;
   --v-layout-bottom: 0 !important;
   --v-layout-left: 0 !important;
   --v-layout-right: 0 !important;
-  min-height: 100% !important;
-  display: flex !important;
+  min-height: 100vh !important;
   padding: 0 !important;
   margin: 0 !important;
 }
 
 .v-main__wrap {
-  min-height: 100% !important;
-  display: flex !important;
+  min-height: 100vh !important;
   padding: 0 !important;
   margin: 0 !important;
 }

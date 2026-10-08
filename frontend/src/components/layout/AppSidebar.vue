@@ -27,10 +27,10 @@
     <v-list density="compact" nav>
       <!-- Dashboard -->
       <v-list-item
-        to="/"
+        to="/dashboard"
         prepend-icon="mdi-view-dashboard"
         title="Dashboard"
-        :class="{ 'active-menu-item': route.path === '/' }"
+        :class="{ 'active-menu-item': route.path === '/dashboard' || route.path === '/' }"
       />
 
       <!-- Servers Group -->
