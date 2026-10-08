@@ -12,7 +12,7 @@
       v-model="drawer"
     />
 
-    <v-main style="min-height: 100vh; padding: 0;">
+    <v-main class="pa-6">
       <router-view v-slot="{ Component }">
         <component :is="Component" style="height: 100%; width: 100%;" />
       </router-view>

@@ -30,7 +30,7 @@
       <v-row class="mt-4 g-4" no-gutter>
         <!-- CPU Usage Card -->
         <v-col cols="12" sm="6" md="3">
-          <v-card class="stat-card pa-4" elevation="6" rounded="lg" height="200">
+          <v-card class="stat-card pa-4" elevation="6" rounded="lg">
             <v-card-text class="pa-3">
               <div class="d-flex align-center justify-space-between mb-3">
                 <div>
@@ -57,7 +57,7 @@
 
         <!-- Memory Usage Card -->
         <v-col cols="12" sm="6" md="3">
-          <v-card class="stat-card pa-4" elevation="6" rounded="lg" height="200">
+          <v-card class="stat-card pa-4" elevation="6" rounded="lg">
             <v-card-text class="pa-3">
               <div class="d-flex align-center justify-space-between mb-3">
                 <div>
@@ -84,7 +84,7 @@
 
         <!-- Disk Usage Card -->
         <v-col cols="12" sm="6" md="3">
-          <v-card class="stat-card pa-4" elevation="6" rounded="lg" height="200">
+          <v-card class="stat-card pa-4" elevation="6" rounded="lg">
             <v-card-text class="pa-3">
               <div class="d-flex align-center justify-space-between mb-3">
                 <div>
@@ -111,7 +111,7 @@
 
         <!-- Models Card -->
         <v-col cols="12" sm="6" md="3">
-          <v-card class="stat-card pa-4" elevation="6" rounded="lg" height="200">
+          <v-card class="stat-card pa-4" elevation="6" rounded="lg">
             <v-card-text class="pa-3">
               <div class="d-flex align-center justify-space-between mb-3">
                 <div>
@@ -244,21 +244,21 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Force v-col to stretch cards to equal height within the grid row */
-.v-col {
+/* Deep target v-col — scoped styles don't reach child component DOM */
+:deep(.v-col) {
   display: flex;
-  align-items: stretch;
+  align-items: stretch !important;
 }
 
-/* Uniform stat card: fixed height + flex column for predictable layout */
+/* Stat card fills its column */
 .stat-card {
   display: flex;
   flex-direction: column;
-  height: 200px;
+  height: 100% !important;
 }
 
-/* v-card-text fills remaining space, content stacks from top */
-.stat-card .v-card-text {
+/* v-card-text fills remaining space */
+.stat-card :deep(.v-card-text) {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
