@@ -12,7 +12,6 @@
   "normal": "Normal",
   "critical": "Crítico",
   "stable": "Estable",
-  
   "dashboard": {
     "title": "Panel de Control",
     "overview": "Vista General",
@@ -25,9 +24,25 @@
     "memory": "Memoria",
     "models": "Modelos",
     "lastUpdate": "Última actualización",
-    "serverOffline": "Servidor fuera de línea"
+    "serverOffline": "Servidor fuera de línea",
+    "noServerSelected": "Seleccione un servidor para comenzar",
+    "selectServerToStart": "Seleccione un servidor para comenzar",
+    "realTimeMonitoring": "Monitoreo en Tiempo Real",
+    "resourceUsage": "Uso de Recursos",
+    "actions": "Acciones",
+    "modelsInstalled": "Modelos Instalados",
+    "addFirstModel": "Agregue su primer modelo",
+    "addModel": "Agregar Modelo",
+    "addModelToStart": "Agregue un modelo para comenzar",
+    "availableModels": "Modelos Disponibles",
+    "modelDistribution": "Distribución de Modelos",
+    "modelName": "Nombre del Modelo",
+    "noModels": "No hay modelos instalados",
+    "bySize": "por Tamaño",
+    "searchModel": "Buscar modelo...",
+    "size": "Tamaño",
+    "modified": "Modificado"
   },
-  
   "nav": {
     "dashboard": "Panel de Control",
     "servers": "Servidores",
@@ -35,7 +50,6 @@
     "settings": "Configuración",
     "help": "Ayuda"
   },
-  
   "servers": {
     "management": {
       "title": "Administración de Servidores",
@@ -98,7 +112,6 @@
       "error": "Error de Descubrimiento"
     }
   },
-  
   "app": {
     "footer": {
       "copyright": "© 2025 CogniTrack. Todos los derechos reservados."
@@ -108,14 +121,12 @@
       "help": "Ayuda"
     }
   },
-  
   "landing": {
     "subtitle": "Sistema de Monitoreo Multi-Plataforma para IA",
     "featuresTitle": "Características Principales",
     "featuresSubtitle": "Todo lo que necesitas para monitorear tu infraestructura Ollama",
     "ctaSubtitle": "Accede a tu panel de control personalizado"
   },
-  
   "common": {
     "cancel": "Cancelar",
     "login": "Iniciar Sesión",
@@ -129,14 +140,12 @@
     "warning": "Advertencia",
     "info": "Información"
   },
-  
   "chat": {
     "typeMessage": "Escribe un mensaje...",
     "placeholder": "Escribe tu prompt aquí...",
     "clear": "Limpiar",
     "send": "Enviar"
   },
-
   "auth": {
     "welcome": "Bienvenido a CogniTrack",
     "loginMessage": "Ingresa tus credenciales para acceder al sistema",
@@ -152,14 +161,181 @@
     "passwordChanged": "Contraseña cambiada exitosamente",
     "loginError": "Error de autenticación",
     "invalidCredentials": "Credenciales incorrectas",
-    "sessionExpired": "Sesión expirada"
+    "sessionExpired": "Sesión expirada",
+    "completeFields": "Por favor complete todos los campos",
+    "connectionError": "Error de conexión"
   },
-  
   "validation": {
     "required": "Este campo es obligatorio",
     "email": "Por favor ingresa un email válido",
     "minLength": "La longitud mínima es de {min} caracteres",
     "maxLength": "La longitud máxima es de {max} caracteres",
     "passwordMismatch": "Las contraseñas no coinciden"
+  },
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Configure sus preferencias de CogniTrack",
+    "appName": "Nombre de la Aplicación",
+    "defaultLanguage": "Idioma Predeterminado",
+    "timezone": "Zona Horaria",
+    "enableNotifications": "Activar Notificaciones",
+    "sections": {
+      "general": "General",
+      "servers": "Servidores",
+      "monitoring": "Monitorización",
+      "security": "Seguridad",
+      "database": "Base de Datos"
+    },
+    "testConnection": "Probar Conexión",
+    "connectionString": "Cadena de Conexión",
+    "connectionTimeout": "Tiempo de Espera de Conexión (s)",
+    "defaultPort": "Puerto Predeterminado",
+    "autoDiscovery": "Descubrimiento Automático",
+    "refreshInterval": "Intervalo de Actualización (s)",
+    "realTimeUpdates": "Actualizaciones en Tiempo Real",
+    "updateFrequency": "Frecuencia de Actualización",
+    "dataRetention": "Retención de Datos (días)",
+    "databaseInfo": "Información de Base de Datos",
+    "databaseServer": "Servidor de Base de Datos",
+    "databaseName": "Nombre de Base de Datos",
+    "enableAlerts": "Activar Alertas",
+    "requireStrongPasswords": "Requerir Contraseñas Seguras",
+    "enableTwoFactor": "Activar Autenticación de Dos Factores",
+    "maxLoginAttempts": "Máximo de Intentos de Inicio de Sesión",
+    "sessionTimeout": "Tiempo de Espera de Sesión (min)",
+    "logSecurityEvents": "Registrar Eventos de Seguridad",
+    "saveSettings": "Guardar Configuración",
+    "resetDefaults": "Restablecer Valores Predeterminados",
+    "confirmReset": "¿Está seguro de que desea restablecer todos los ajustes a los valores predeterminados?"
+  },
+  "profile": {
+    "title": "Perfil de Usuario",
+    "subtitle": "Gestione su información de cuenta",
+    "personalInfo": "Información Personal",
+    "accountInfo": "Información de Cuenta",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "email": "Correo Electrónico",
+    "role": "Rol",
+    "memberSince": "Miembro Desde",
+    "lastLogin": "Último Inicio de Sesión",
+    "bio": "Biografía",
+    "preferences": "Preferencias",
+    "language": "Idioma",
+    "theme": "Tema",
+    "themes": {
+      "light": "Claro",
+      "dark": "Oscuro"
+    },
+    "changePassword": "Cambiar Contraseña",
+    "currentPassword": "Contraseña Actual",
+    "newPassword": "Nueva Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "updatePassword": "Actualizar Contraseña",
+    "saveChanges": "Guardar Cambios"
+  },
+  "help": {
+    "title": "Ayuda y Documentación",
+    "subtitle": "Aprenda a usar CogniTrack",
+    "gettingStarted": "Primeros Pasos",
+    "gettingStarted.description": "Aprenda los conceptos básicos de CogniTrack",
+    "dashboard": "Panel",
+    "dashboard.overview": "Resumen",
+    "dashboard.overviewDesc": "El panel proporciona una vista en tiempo real de todos sus servidores y modelos",
+    "dashboard.description": "Monitoree su infraestructura de un vistazo",
+    "servers": "Servidores",
+    "servers.description": "Gestione y monitoree su flota de servidores",
+    "monitoring": "Monitorización",
+    "monitoring.description": "Monitoreo en tiempo real y alertas",
+    "monitoring.metrics": "Métricas",
+    "monitoring.metricsDesc": "Vea el uso de CPU, memoria y red en tiempo real",
+    "monitoring.alerts": "Alertas",
+    "monitoring.alertsDesc": "Configure umbrales y canales de notificación",
+    "monitoring.alertsTitle": "Configuración de Alertas",
+    "monitoring.alertsNote": "Las alertas se activan cuando las métricas superan los umbrales definidos",
+    "monitoring.performance": "Rendimiento",
+    "monitoring.performanceDesc": "Siga las tendencias de rendimiento a lo largo del tiempo",
+    "faq": {
+      "title": "Preguntas Frecuentes"
+    },
+    "troubleshooting": "Solución de Problemas",
+    "troubleshooting.problem": "Problema",
+    "troubleshooting.solution": "Solución",
+    "troubleshooting.description": "Problemas comunes y sus soluciones",
+    "support": "Soporte",
+    "support.title": "Contactar Soporte",
+    "support.description": "Obtenga ayuda con CogniTrack",
+    "support.email": "Soporte por Correo Electrónico",
+    "support.github": "Repositorio de GitHub",
+    "support.sendEmail": "Enviar Correo Electrónico",
+    "support.viewRepo": "Ver Repositorio",
+    "sections": {
+      "title": "Secciones de Documentación"
+    },
+    "search": "Buscar documentación...",
+    "note": "Nota",
+    "tip": "Consejo",
+    "steps": "Pasos"
+  },
+  "apiDocs": {
+    "title": "Documentación de la API",
+    "subtitle": "Referencia completa de la API de CogniTrack",
+    "introduction": {
+      "title": "Introducción",
+      "description": "Bienvenido a la API de CogniTrack",
+      "features": "Características Principales",
+      "feature1": "Diseño de API RESTful",
+      "feature2": "Solicitud/respuesta JSON",
+      "feature3": "Autenticación basada en tokens",
+      "feature4": "Limitación de velocidad"
+    },
+    "baseUrl": "URL Base",
+    "version": "Versión",
+    "authentication": {
+      "title": "Autenticación",
+      "description": "Use el token Bearer en el encabezado Authorization",
+      "warning": "Mantenga seguro su token de API"
+    },
+    "endpoints": {
+      "system": {
+        "title": "Sistema",
+        "getMetrics": {
+          "description": "Obtener métricas del sistema"
+        }
+      },
+      "ollama": {
+        "title": "Ollama",
+        "getMetrics": {
+          "description": "Obtener métricas de Ollama"
+        },
+        "getTags": {
+          "description": "Obtener etiquetas de modelos",
+          "serverParam": "ID del Servidor"
+        }
+      }
+    },
+    "parameters": "Parámetros",
+    "paramName": "Nombre",
+    "paramType": "Tipo",
+    "paramRequired": "Requerido",
+    "paramDescription": "Descripción",
+    "response": "Respuesta",
+    "example": "Ejemplo",
+    "errorCodes": {
+      "title": "Códigos de Error",
+      "code": "Código",
+      "description": "Descripción",
+      "solution": "Solución"
+    },
+    "tester": {
+      "title": "Probador de API",
+      "description": "Pruebe endpoints directamente",
+      "selectEndpoint": "Seleccionar Endpoint",
+      "test": "Probar"
+    },
+    "apiSections": {
+      "title": "Secciones"
+    },
+    "yes": "Sí"
   }
 }

@@ -25,7 +25,7 @@
               color="primary"
             >
               <template v-slot:prepend>
-                <v-icon>{{ section.icon }}</v-icon>
+                <v-icon :icon="section.icon" />
               </template>
               <v-list-item-title>{{ t(section.label) }}</v-list-item-title>
             </v-list-item>

@@ -12,7 +12,6 @@
   "normal": "Normal",
   "critical": "Critical",
   "stable": "Stable",
-  
   "dashboard": {
     "title": "Dashboard",
     "overview": "Overview",
@@ -25,9 +24,25 @@
     "memory": "Memory",
     "models": "Models",
     "lastUpdate": "Last update",
-    "serverOffline": "Server offline"
+    "serverOffline": "Server offline",
+    "noServerSelected": "Select a server to get started",
+    "selectServerToStart": "Select a server to start",
+    "realTimeMonitoring": "Real-Time Monitoring",
+    "resourceUsage": "Resource Usage",
+    "actions": "Actions",
+    "modelsInstalled": "Models Installed",
+    "addFirstModel": "Add your first model",
+    "addModel": "Add Model",
+    "addModelToStart": "Add a model to start",
+    "availableModels": "Available Models",
+    "modelDistribution": "Model Distribution",
+    "modelName": "Model Name",
+    "noModels": "No models installed",
+    "bySize": "by Size",
+    "searchModel": "Search model...",
+    "size": "Size",
+    "modified": "Modified"
   },
-  
   "nav": {
     "dashboard": "Dashboard",
     "servers": "Servers",
@@ -35,7 +50,6 @@
     "settings": "Settings",
     "help": "Help"
   },
-  
   "servers": {
     "management": {
       "title": "Server Management",
@@ -98,7 +112,6 @@
       "error": "Discovery Error"
     }
   },
-  
   "app": {
     "footer": {
       "copyright": "© 2025 CogniTrack. All rights reserved."
@@ -108,14 +121,12 @@
       "help": "Help"
     }
   },
-  
   "landing": {
     "subtitle": "Multi-Platform AI Monitoring System",
     "featuresTitle": "Key Features",
     "featuresSubtitle": "Everything you need to monitor your Ollama infrastructure",
     "ctaSubtitle": "Access your personalized dashboard"
   },
-  
   "common": {
     "cancel": "Cancel",
     "login": "Login",
@@ -129,14 +140,12 @@
     "warning": "Warning",
     "info": "Information"
   },
-  
   "chat": {
     "typeMessage": "Type a message...",
     "placeholder": "Write your prompt here...",
     "clear": "Clear",
     "send": "Send"
   },
-
   "auth": {
     "welcome": "Welcome to CogniTrack",
     "loginMessage": "Enter your credentials to access the system",
@@ -152,14 +161,181 @@
     "passwordChanged": "Password changed successfully",
     "loginError": "Authentication error",
     "invalidCredentials": "Invalid credentials",
-    "sessionExpired": "Session expired"
+    "sessionExpired": "Session expired",
+    "completeFields": "Please fill in all fields",
+    "connectionError": "Connection error"
   },
-  
   "validation": {
     "required": "This field is required",
     "email": "Please enter a valid email",
     "minLength": "Minimum length is {min} characters",
     "maxLength": "Maximum length is {max} characters",
     "passwordMismatch": "Passwords do not match"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Configure your CogniTrack preferences",
+    "appName": "Application Name",
+    "defaultLanguage": "Default Language",
+    "timezone": "Timezone",
+    "enableNotifications": "Enable Notifications",
+    "sections": {
+      "general": "General",
+      "servers": "Servers",
+      "monitoring": "Monitoring",
+      "security": "Security",
+      "database": "Database"
+    },
+    "testConnection": "Test Connection",
+    "connectionString": "Connection String",
+    "connectionTimeout": "Connection Timeout (s)",
+    "defaultPort": "Default Port",
+    "autoDiscovery": "Auto Discovery",
+    "refreshInterval": "Refresh Interval (s)",
+    "realTimeUpdates": "Real-Time Updates",
+    "updateFrequency": "Update Frequency",
+    "dataRetention": "Data Retention (days)",
+    "databaseInfo": "Database Information",
+    "databaseServer": "Database Server",
+    "databaseName": "Database Name",
+    "enableAlerts": "Enable Alerts",
+    "requireStrongPasswords": "Require Strong Passwords",
+    "enableTwoFactor": "Enable Two-Factor Authentication",
+    "maxLoginAttempts": "Max Login Attempts",
+    "sessionTimeout": "Session Timeout (min)",
+    "logSecurityEvents": "Log Security Events",
+    "saveSettings": "Save Settings",
+    "resetDefaults": "Reset to Defaults",
+    "confirmReset": "Are you sure you want to reset all settings to defaults?"
+  },
+  "profile": {
+    "title": "User Profile",
+    "subtitle": "Manage your account information",
+    "personalInfo": "Personal Information",
+    "accountInfo": "Account Information",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "role": "Role",
+    "memberSince": "Member Since",
+    "lastLogin": "Last Login",
+    "bio": "Biography",
+    "preferences": "Preferences",
+    "language": "Language",
+    "theme": "Theme",
+    "themes": {
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "updatePassword": "Update Password",
+    "saveChanges": "Save Changes"
+  },
+  "help": {
+    "title": "Help & Documentation",
+    "subtitle": "Learn how to use CogniTrack",
+    "gettingStarted": "Getting Started",
+    "gettingStarted.description": "Learn the basics of CogniTrack",
+    "dashboard": "Dashboard",
+    "dashboard.overview": "Overview",
+    "dashboard.overviewDesc": "The dashboard provides a real-time view of all your servers and models",
+    "dashboard.description": "Monitor your infrastructure at a glance",
+    "servers": "Servers",
+    "servers.description": "Manage and monitor your server fleet",
+    "monitoring": "Monitoring",
+    "monitoring.description": "Real-time monitoring and alerts",
+    "monitoring.metrics": "Metrics",
+    "monitoring.metricsDesc": "View CPU, memory, and network usage in real-time",
+    "monitoring.alerts": "Alerts",
+    "monitoring.alertsDesc": "Configure thresholds and notification channels",
+    "monitoring.alertsTitle": "Alert Configuration",
+    "monitoring.alertsNote": "Alerts are triggered when metrics exceed defined thresholds",
+    "monitoring.performance": "Performance",
+    "monitoring.performanceDesc": "Track performance trends over time",
+    "faq": {
+      "title": "Frequently Asked Questions"
+    },
+    "troubleshooting": "Troubleshooting",
+    "troubleshooting.problem": "Problem",
+    "troubleshooting.solution": "Solution",
+    "troubleshooting.description": "Common issues and their solutions",
+    "support": "Support",
+    "support.title": "Contact Support",
+    "support.description": "Get help with CogniTrack",
+    "support.email": "Email Support",
+    "support.github": "GitHub Repository",
+    "support.sendEmail": "Send Email",
+    "support.viewRepo": "View Repository",
+    "sections": {
+      "title": "Documentation Sections"
+    },
+    "search": "Search documentation...",
+    "note": "Note",
+    "tip": "Tip",
+    "steps": "Steps"
+  },
+  "apiDocs": {
+    "title": "API Documentation",
+    "subtitle": "Complete API reference for CogniTrack",
+    "introduction": {
+      "title": "Introduction",
+      "description": "Welcome to the CogniTrack API",
+      "features": "Key Features",
+      "feature1": "RESTful API design",
+      "feature2": "JSON request/response",
+      "feature3": "Token-based authentication",
+      "feature4": "Rate limiting"
+    },
+    "baseUrl": "Base URL",
+    "version": "Version",
+    "authentication": {
+      "title": "Authentication",
+      "description": "Use Bearer token in Authorization header",
+      "warning": "Keep your API token secure"
+    },
+    "endpoints": {
+      "system": {
+        "title": "System",
+        "getMetrics": {
+          "description": "Get system metrics"
+        }
+      },
+      "ollama": {
+        "title": "Ollama",
+        "getMetrics": {
+          "description": "Get Ollama metrics"
+        },
+        "getTags": {
+          "description": "Get model tags",
+          "serverParam": "Server ID"
+        }
+      }
+    },
+    "parameters": "Parameters",
+    "paramName": "Name",
+    "paramType": "Type",
+    "paramRequired": "Required",
+    "paramDescription": "Description",
+    "response": "Response",
+    "example": "Example",
+    "errorCodes": {
+      "title": "Error Codes",
+      "code": "Code",
+      "description": "Description",
+      "solution": "Solution"
+    },
+    "tester": {
+      "title": "API Tester",
+      "description": "Test endpoints directly",
+      "selectEndpoint": "Select Endpoint",
+      "test": "Test"
+    },
+    "apiSections": {
+      "title": "Sections"
+    },
+    "yes": "Yes"
   }
 }
