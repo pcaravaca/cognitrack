@@ -237,31 +237,43 @@
   "help": {
     "title": "Ayuda y Documentación",
     "subtitle": "Aprenda a usar CogniTrack",
-    "gettingStarted": "Primeros Pasos",
-    "gettingStarted.description": "Aprenda los conceptos básicos de CogniTrack",
-    "dashboard": "Panel",
-    "dashboard.overview": "Resumen",
-    "dashboard.overviewDesc": "El panel proporciona una vista en tiempo real de todos sus servidores y modelos",
-    "dashboard.description": "Monitoree su infraestructura de un vistazo",
-    "servers": "Servidores",
-    "servers.description": "Gestione y monitoree su flota de servidores",
-    "monitoring": "Monitorización",
-    "monitoring.description": "Monitoreo en tiempo real y alertas",
-    "monitoring.metrics": "Métricas",
-    "monitoring.metricsDesc": "Vea el uso de CPU, memoria y red en tiempo real",
-    "monitoring.alerts": "Alertas",
-    "monitoring.alertsDesc": "Configure umbrales y canales de notificación",
-    "monitoring.alertsTitle": "Configuración de Alertas",
-    "monitoring.alertsNote": "Las alertas se activan cuando las métricas superan los umbrales definidos",
-    "monitoring.performance": "Rendimiento",
-    "monitoring.performanceDesc": "Siga las tendencias de rendimiento a lo largo del tiempo",
+    "gettingStarted": {
+      "title": "Primeros Pasos",
+      "description": "Aprenda los conceptos básicos de CogniTrack"
+    },
+    "dashboard": {
+      "title": "Guía del Panel",
+      "overview": "Resumen",
+      "overviewDesc": "El panel proporciona una vista en tiempo real de todos sus servidores y modelos",
+      "description": "Monitoree su infraestructura de un vistazo"
+    },
+    "servers": {
+      "title": "Guía de Gestión de Servidores",
+      "description": "Gestione y monitoree su flota de servidores"
+    },
+    "monitoring": {
+      "title": "Guía de Monitorización",
+      "description": "Monitoreo en tiempo real y alertas",
+      "metricsTitle": "Métricas y Gráficos",
+      "performanceTitle": "Tendencias de Rendimiento",
+      "metrics": "Métricas",
+      "metricsDesc": "Vea el uso de CPU, memoria y red en tiempo real",
+      "alerts": "Alertas",
+      "alertsDesc": "Configure umbrales y canales de notificación",
+      "alertsTitle": "Configuración de Alertas",
+      "alertsNote": "Las alertas se activan cuando las métricas superan los umbrales definidos",
+      "performance": "Rendimiento",
+      "performanceDesc": "Siga las tendencias de rendimiento a lo largo del tiempo"
+    },
     "faq": {
       "title": "Preguntas Frecuentes"
     },
-    "troubleshooting": "Solución de Problemas",
-    "troubleshooting.problem": "Problema",
-    "troubleshooting.solution": "Solución",
-    "troubleshooting.description": "Problemas comunes y sus soluciones",
+    "troubleshooting": {
+      "title": "Guía de Solución de Problemas",
+      "problem": "Problema",
+      "solution": "Solución",
+      "description": "Problemas comunes y sus soluciones"
+    },
     "support": "Soporte",
     "support.title": "Contactar Soporte",
     "support.description": "Obtenga ayuda con CogniTrack",

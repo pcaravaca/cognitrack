@@ -237,31 +237,43 @@
   "help": {
     "title": "Help & Documentation",
     "subtitle": "Learn how to use CogniTrack",
-    "gettingStarted": "Getting Started",
-    "gettingStarted.description": "Learn the basics of CogniTrack",
-    "dashboard": "Dashboard",
-    "dashboard.overview": "Overview",
-    "dashboard.overviewDesc": "The dashboard provides a real-time view of all your servers and models",
-    "dashboard.description": "Monitor your infrastructure at a glance",
-    "servers": "Servers",
-    "servers.description": "Manage and monitor your server fleet",
-    "monitoring": "Monitoring",
-    "monitoring.description": "Real-time monitoring and alerts",
-    "monitoring.metrics": "Metrics",
-    "monitoring.metricsDesc": "View CPU, memory, and network usage in real-time",
-    "monitoring.alerts": "Alerts",
-    "monitoring.alertsDesc": "Configure thresholds and notification channels",
-    "monitoring.alertsTitle": "Alert Configuration",
-    "monitoring.alertsNote": "Alerts are triggered when metrics exceed defined thresholds",
-    "monitoring.performance": "Performance",
-    "monitoring.performanceDesc": "Track performance trends over time",
+    "gettingStarted": {
+      "title": "Getting Started",
+      "description": "Learn the basics of CogniTrack"
+    },
+    "dashboard": {
+      "title": "Dashboard Guide",
+      "overview": "Overview",
+      "overviewDesc": "The dashboard provides a real-time view of all your servers and models",
+      "description": "Monitor your infrastructure at a glance"
+    },
+    "servers": {
+      "title": "Server Management Guide",
+      "description": "Manage and monitor your server fleet"
+    },
+    "monitoring": {
+      "title": "Monitoring Guide",
+      "description": "Real-time monitoring and alerts",
+      "metricsTitle": "Metrics & Charts",
+      "performanceTitle": "Performance Trends",
+      "metrics": "Metrics",
+      "metricsDesc": "View CPU, memory, and network usage in real-time",
+      "alerts": "Alerts",
+      "alertsDesc": "Configure thresholds and notification channels",
+      "alertsTitle": "Alert Configuration",
+      "alertsNote": "Alerts are triggered when metrics exceed defined thresholds",
+      "performance": "Performance",
+      "performanceDesc": "Track performance trends over time"
+    },
     "faq": {
       "title": "Frequently Asked Questions"
     },
-    "troubleshooting": "Troubleshooting",
-    "troubleshooting.problem": "Problem",
-    "troubleshooting.solution": "Solution",
-    "troubleshooting.description": "Common issues and their solutions",
+    "troubleshooting": {
+      "title": "Troubleshooting Guide",
+      "problem": "Problem",
+      "solution": "Solution",
+      "description": "Common issues and their solutions"
+    },
     "support": "Support",
     "support.title": "Contact Support",
     "support.description": "Get help with CogniTrack",
