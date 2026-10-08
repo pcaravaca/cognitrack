@@ -244,22 +244,23 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Ensure the card has proper visibility */
-.v-card {
-  background-color: rgba(var(--v-theme-surface), 1) !important;
+/* Force v-col to stretch cards to equal height within the grid row */
+.v-col {
+  display: flex;
+  align-items: stretch;
 }
 
-/* Uniform stat card heights for proper grid alignment */
+/* Uniform stat card: fixed height + flex column for predictable layout */
 .stat-card {
   display: flex;
   flex-direction: column;
   height: 200px;
 }
 
+/* v-card-text fills remaining space, content stacks from top */
 .stat-card .v-card-text {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
 </style>
