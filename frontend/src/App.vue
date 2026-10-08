@@ -1,27 +1,30 @@
 <template>
   <v-app :theme="$vuetify.theme.global.current.dark ? 'dark' : 'light'">
-    <!-- Header - Solo mostrar si NO es landing page -->
-    <AppNavbar 
-      v-if="!isLandingPage"
-      @toggle-drawer="drawer = !drawer"
-    />
+    <div class="app-container">
+      <!-- Sidebar -->
+      <AppSidebar 
+        v-if="!isLandingPage" 
+        :drawer-open="drawer"
+        @update:drawer="drawer = $event"
+      />
 
-    <!-- Sidebar - Solo mostrar si NO es landing page -->
-    <AppSidebar
-      v-if="!isLandingPage"
-      v-model="drawer"
-    />
+      <!-- Main content area -->
+      <div class="app-content" :class="{ 'sidebar-open': drawer && !isMobile }">
+        <AppNavbar 
+          v-if="!isLandingPage"
+          @toggle-drawer="drawer = !drawer"
+        />
+        
+        <div class="main-content">
+          <router-view />
+        </div>
+      </div>
+    </div>
 
-    <v-main class="pa-6">
-      <router-view v-slot="{ Component }">
-        <component :is="Component" />
-      </router-view>
-    </v-main>
-
-    <!-- Botón de chat global - solo si no es landing -->
+    <!-- Chat button global -->
     <ChatButton v-if="!isLandingPage" />
-    
-    <!-- Snackbar para notificaciones -->
+
+    <!-- Snackbar -->
     <v-snackbar
       v-model="snackbar"
       :color="snackbarColor"
@@ -37,6 +40,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useServersStore } from './stores/servers'
+import { useDisplay } from 'vuetify'
 import AppNavbar from './components/layout/AppNavbar.vue'
 import AppSidebar from './components/layout/AppSidebar.vue'
 import ChatButton from './components/ChatButton.vue'
@@ -44,28 +48,23 @@ import ChatButton from './components/ChatButton.vue'
 const router = useRouter()
 const route = useRoute()
 const serversStore = useServersStore()
+const { mobile } = useDisplay()
+
 const drawer = ref(true)
 
-// Snackbar state
-const snackbar = ref(false)
-const snackbarText = ref('')
-const snackbarColor = ref('success')
+const isMobile = computed(() => mobile.value)
 
-// Detectar si estamos en landing page
 const isLandingPage = computed(() => {
   return route.name === 'landing' || route.path === '/landing'
 })
 
-function isActive(routeName: string) {
-  return route.name === routeName
-}
+const snackbar = ref(false)
+const snackbarText = ref('')
+const snackbarColor = ref('success')
 
-// Estado de carga inicial
 const isInitialized = ref(false)
 
-// Limpiar estado inválido al cargar la aplicación
 function cleanupAppState() {
-  // Limpiar localStorage si hay rutas inválidas
   const returnUrl = localStorage.getItem('cognitrack_return_url');
   if (returnUrl && (returnUrl.includes('false') || returnUrl === 'false')) {
     console.log('🧹 Limpiando URL de retorno inválida:', returnUrl);
@@ -73,16 +72,12 @@ function cleanupAppState() {
   }
 }
 
-// Cargar servidores al iniciar (solo si no es landing page)
 onMounted(async () => {
-  // Limpiar estado al iniciar
   cleanupAppState();
   
   if (!isLandingPage.value) {
     try {
       console.log('🚀 Inicializando aplicación...')
-      // La inicialización de servidores ahora ocurre después del login
-      // a través del store de autenticación
       console.log('✅ Inicialización completada')
     } catch (error) {
       console.error('❌ Error durante la inicialización:', error)
@@ -94,7 +89,6 @@ onMounted(async () => {
 </script>
 
 <style>
-/* Reset total */
 * {
   margin: 0;
   padding: 0;
@@ -104,14 +98,38 @@ onMounted(async () => {
 html, body, #app {
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
 }
 
-.v-application {
-  min-height: 100% !important;
+.app-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.v-application--wrap {
-  min-height: 100% !important;
+.app-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+}
+
+.app-content.sidebar-open {
+  margin-left: 256px;
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+@media (max-width: 959px) {
+  .app-content.sidebar-open {
+    margin-left: 0;
+  }
 }
 </style>

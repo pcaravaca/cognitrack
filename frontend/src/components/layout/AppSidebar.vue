@@ -1,14 +1,7 @@
 <template>
-  <v-navigation-drawer
-    v-model="drawer"
-    :rail="isMiniVariant"
-    :permanent="!isMobile"
-    :temporary="isMobile"
-    app
-    class="sidebar"
-  >
-    <!-- Header -->
-    <div v-if="!isMiniVariant" class="sidebar-header">
+  <aside class="sidebar" :class="{ 'collapsed': !drawerOpen }">
+    <!-- Sidebar header -->
+    <div v-if="drawerOpen" class="sidebar-header">
       <v-list-item
         :title="appName"
         :subtitle="appDescription"
@@ -21,11 +14,10 @@
         </template>
       </v-list-item>
     </div>
-    <v-divider />
+    <v-divider v-if="drawerOpen" />
 
-    <!-- Navigation Menu -->
-    <v-list density="compact" nav>
-      <!-- Dashboard -->
+    <!-- Navigation -->
+    <v-list density="compact" nav class="flex-grow-1">
       <v-list-item
         to="/dashboard"
         prepend-icon="mdi-view-dashboard"
@@ -43,7 +35,6 @@
             :class="{ 'active-menu-item': route.path.startsWith('/servers') }"
           />
         </template>
-
         <v-list-item
           v-for="(item, i) in serversItems"
           :key="'servers-' + i"
@@ -64,7 +55,6 @@
             :class="{ 'active-menu-item': route.path.startsWith('/monitoring') }"
           />
         </template>
-
         <v-list-item
           v-for="(item, i) in monitoringItems"
           :key="'monitoring-' + i"
@@ -85,7 +75,6 @@
             :class="{ 'active-menu-item': route.path.startsWith('/settings') }"
           />
         </template>
-
         <v-list-item
           v-for="(item, i) in settingsItems"
           :key="'settings-' + i"
@@ -96,7 +85,6 @@
         />
       </v-list-group>
 
-      <!-- Help & Documentation -->
       <v-divider class="my-2" />
       
       <v-list-item
@@ -114,51 +102,40 @@
       />
     </v-list>
 
-    <!-- Footer -->
-    <template v-slot:append>
+    <!-- Footer toggle -->
+    <div class="sidebar-footer">
       <v-divider />
       <div class="pa-2">
         <v-btn
           variant="text"
           block
-          :icon="isMiniVariant ? 'mdi-chevron-right' : 'mdi-chevron-left'"
-          @click="isMiniVariant = !isMiniVariant"
-          class="toggle-sidebar"
-          :title="isMiniVariant ? 'Expandir menú' : 'Contraer menú'"
+          :icon="drawerOpen ? 'mdi-chevron-left' : 'mdi-chevron-right'"
+          @click="emit('update:drawer', !drawerOpen)"
+          :title="drawerOpen ? 'Contraer menú' : 'Expandir menú'"
         />
       </div>
-    </template>
-  </v-navigation-drawer>
+    </div>
+  </aside>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useDisplay } from 'vuetify'
 
-// Props
 const props = defineProps({
-  modelValue: {
+  drawerOpen: {
     type: Boolean,
     default: true
   }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:drawer'])
 
-// Utilities
 const route = useRoute()
-const { mobile } = useDisplay()
 
-// State
-const drawer = ref(true)
-const isMiniVariant = ref(false)
-
-// App data
 const appName = 'CogniTrack'
 const appDescription = 'Monitor de servidores'
 
-// Menu items
 const serversItems = [
   { title: 'Estado de Servidores', to: '/servers' },
   { title: 'Administrar Servidores', to: '/servers/manage' },
@@ -175,32 +152,29 @@ const settingsItems = [
   { title: 'Configuración General', to: '/settings' },
   { title: 'Perfil de Usuario', to: '/profile' }
 ]
-
-// Computed
-const isMobile = computed(() => mobile.value)
-
-// Lifecycle
-onMounted(() => {
-  handleResize()
-  window.addEventListener('resize', handleResize)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', handleResize)
-})
-
-const handleResize = () => {
-  if (window.innerWidth < 960) {
-    isMiniVariant.value = false
-  }
-}
 </script>
 
 <style scoped>
 .sidebar {
+  width: 256px;
+  min-width: 256px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--v-surface-base, #1e1e1e);
+  border-right: 1px solid var(--v-divider, rgba(0,0,0,0.12));
+  overflow: hidden;
   transition: all 0.3s ease;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-  z-index: 10;
+  z-index: 20;
+}
+
+.sidebar.collapsed {
+  width: 64px;
+  min-width: 64px;
+}
+
+.sidebar.collapsed .sidebar-header {
+  display: none;
 }
 
 .sidebar-header {
@@ -209,41 +183,13 @@ const handleResize = () => {
   color: white;
 }
 
-/* Explicit drawer width for desktop — ensures v-main margin calculation works */
-.v-navigation-drawer {
-  width: 256px !important;
-  max-width: 256px !important;
+.sidebar-footer {
+  margin-top: auto;
 }
 
 .active-menu-item {
   background-color: rgba(var(--v-primary-base), 0.1);
   border-left: 3px solid var(--v-primary-base);
   color: var(--v-primary-base);
-}
-
-.toggle-sidebar {
-  transition: all 0.3s ease;
-}
-
-.toggle-sidebar:hover {
-  transform: scale(1.1);
-}
-
-@media (max-width: 959px) {
-  .v-navigation-drawer {
-    width: 280px !important;
-  }
-}
-
-:deep(.v-list-item--active) {
-  font-weight: 500;
-}
-
-:deep(.v-list-group__items .v-list-item) {
-  padding-left: 32px !important;
-}
-
-:deep(.v-list-item--link:not(.v-list-item--active):hover) {
-  background-color: rgba(0, 0, 0, 0.04);
 }
 </style>
