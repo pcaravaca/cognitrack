@@ -130,6 +130,13 @@
     "info": "Información"
   },
   
+  "chat": {
+    "typeMessage": "Escribe un mensaje...",
+    "placeholder": "Escribe tu prompt aquí...",
+    "clear": "Limpiar",
+    "send": "Enviar"
+  },
+
   "auth": {
     "welcome": "Bienvenido a CogniTrack",
     "loginMessage": "Ingresa tus credenciales para acceder al sistema",
