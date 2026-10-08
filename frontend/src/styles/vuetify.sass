@@ -2,4 +2,6 @@
 // vite-plugin-vuetify con styles: true no activa el stylesPlugin (requiere 'sass'/'expose'/objeto)
 // por eso los estilos de componentes (.v-card, .v-btn, etc.) no se incluyen automáticamente
 // Fix: importar el CSS precompilado de Vuetify que incluye todos los componentes
-@import 'vuetify/dist/vuetify.css'
+// NOTA: @import de CSS dentro de .sass no funciona correctamente en Vite 4.
+//       El CSS se sirve pero no se inyecta en el DOM como hoja de estilos global.
+//       El import real de CSS se hace directamente en main.ts.

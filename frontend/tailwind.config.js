@@ -6,6 +6,9 @@ export default {
     "./src/**/*.vue",
     "./node_modules/vuetify/lib/**/*.{js,ts,vue}"
   ],
+  corePlugins: {
+    preflight: false,
+  },
   theme: {
     extend: {
       colors: {
