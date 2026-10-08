@@ -244,23 +244,27 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Deep target v-col — scoped styles don't reach child component DOM */
-:deep(.v-col) {
-  display: flex;
-  align-items: stretch !important;
-}
-
-/* Stat card fills its column */
+/* Stat card fills its column (stat-card class IS in this component's template) */
 .stat-card {
   display: flex;
   flex-direction: column;
   height: 100% !important;
 }
+</style>
 
-/* v-card-text fills remaining space */
-.stat-card :deep(.v-card-text) {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
+<style>
+/* v-col is rendered by Vuetify's v-col COMPONENT, not this component's template.
+   Scoped CSS data-v-xxx attribute on parent won't reach v-col's rendered div.
+   Must use GLOBAL CSS to target Vuetify's child component DOM. */
+.v-col {
+  display: flex !important;
+  align-items: stretch !important;
+}
+
+/* v-card-text is inside Vuetify's v-card component — same scoping issue */
+.stat-card .v-card-text {
+  flex-grow: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 </style>
