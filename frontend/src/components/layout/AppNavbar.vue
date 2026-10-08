@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app color="primary" dark>
+  <v-app-bar color="primary" dark flat height="64">
     <!-- Botón para alternar el menú lateral -->
     <v-app-bar-nav-icon @click="toggleDrawer" />
 

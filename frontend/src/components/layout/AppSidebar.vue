@@ -102,17 +102,11 @@
       />
     </v-list>
 
-    <!-- Footer toggle -->
+    <!-- Footer -->
     <div class="sidebar-footer">
       <v-divider />
-      <div class="pa-2">
-        <v-btn
-          variant="text"
-          block
-          :icon="drawerOpen ? 'mdi-chevron-left' : 'mdi-chevron-right'"
-          @click="emit('update:drawer', !drawerOpen)"
-          :title="drawerOpen ? 'Contraer menú' : 'Expandir menú'"
-        />
+      <div class="pa-2 text-center text-caption text-medium-emphasis">
+        v1.0.0
       </div>
     </div>
   </aside>
