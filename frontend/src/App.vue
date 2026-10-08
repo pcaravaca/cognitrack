@@ -124,7 +124,7 @@ html, body, #app {
 .main-content {
   flex: 1;
   overflow-y: auto;
-  padding: 24px;
+  padding: 12px;
 }
 
 @media (max-width: 959px) {
