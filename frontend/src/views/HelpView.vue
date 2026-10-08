@@ -26,7 +26,7 @@
               color="primary"
             >
               <template v-slot:prepend>
-                <v-icon size="small">{{ section.icon }}</v-icon>
+                <v-icon size="small" :icon="section.icon" />
               </template>
               <v-list-item-title class="text-body-2">{{ t(section.title) }}</v-list-item-title>
             </v-list-item>
@@ -126,7 +126,7 @@
               <v-col cols="12" md="6">
                 <div class="feature-list">
                   <div v-for="feature in dashboardFeatures" :key="feature.key" class="d-flex mb-3">
-                    <v-icon :color="feature.color" class="mr-3">{{ feature.icon }}</v-icon>
+                    <v-icon :color="feature.color" class="mr-3" :icon="feature.icon" />
                     <div>
                       <div class="font-weight-medium">{{ t(feature.title) }}</div>
                       <div class="text-body-2 text-medium-emphasis">{{ t(feature.description) }}</div>
@@ -151,7 +151,7 @@
               <v-expansion-panel v-for="serverTopic in serverTopics" :key="serverTopic.key">
                 <v-expansion-panel-title>
                   <div class="d-flex align-center">
-                    <v-icon class="mr-2">{{ serverTopic.icon }}</v-icon>
+                    <v-icon class="mr-2" :icon="serverTopic.icon" />
                     {{ t(serverTopic.title) }}
                   </div>
                 </v-expansion-panel-title>
@@ -196,8 +196,8 @@
               <v-tab value="performance">{{ t('help.monitoring.performance') }}</v-tab>
             </v-tabs>
             
-            <v-tabs-window v-model="monitoringTab" class="mt-4">
-              <v-tabs-window-item value="metrics">
+            <v-window v-model="monitoringTab" class="mt-4">
+              <v-window-item value="metrics">
                 <div class="monitoring-content">
                   <h4 class="text-subtitle-1 mb-3">{{ t('help.monitoring.metricsTitle') }}</h4>
                   <p>{{ t('help.monitoring.metricsDesc') }}</p>
@@ -205,16 +205,16 @@
                   <v-list>
                     <v-list-item v-for="metric in availableMetrics" :key="metric.key">
                       <template v-slot:prepend>
-                        <v-icon :color="metric.color">{{ metric.icon }}</v-icon>
+                        <v-icon :color="metric.color" :icon="metric.icon" />
                       </template>
                       <v-list-item-title>{{ t(metric.name) }}</v-list-item-title>
                       <v-list-item-subtitle>{{ t(metric.description) }}</v-list-item-subtitle>
                     </v-list-item>
                   </v-list>
                 </div>
-              </v-tabs-window-item>
-              
-              <v-tabs-window-item value="alerts">
+              </v-window-item>
+
+              <v-window-item value="alerts">
                 <div class="monitoring-content">
                   <h4 class="text-subtitle-1 mb-3">{{ t('help.monitoring.alertsTitle') }}</h4>
                   <p>{{ t('help.monitoring.alertsDesc') }}</p>
@@ -223,15 +223,15 @@
                     {{ t('help.monitoring.alertsNote') }}
                   </v-alert>
                 </div>
-              </v-tabs-window-item>
-              
-              <v-tabs-window-item value="performance">
+              </v-window-item>
+
+              <v-window-item value="performance">
                 <div class="monitoring-content">
                   <h4 class="text-subtitle-1 mb-3">{{ t('help.monitoring.performanceTitle') }}</h4>
                   <p>{{ t('help.monitoring.performanceDesc') }}</p>
                 </div>
-              </v-tabs-window-item>
-            </v-tabs-window>
+              </v-window-item>
+            </v-window>
           </v-card-text>
         </v-card>
 

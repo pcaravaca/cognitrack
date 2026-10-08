@@ -26,7 +26,7 @@
               color="primary"
             >
               <template v-slot:prepend>
-                <v-icon size="small">{{ section.icon }}</v-icon>
+                <v-icon size="small" :icon="section.icon" />
               </template>
               <v-list-item-title class="text-body-2">{{ t(section.title) }}</v-list-item-title>
             </v-list-item>
@@ -108,20 +108,20 @@
                 <v-tab value="example">{{ t('apiDocs.example') }}</v-tab>
               </v-tabs>
               
-              <v-tabs-window v-model="systemTab">
-                <v-tabs-window-item value="response">
+              <v-window v-model="systemTab">
+                <v-window-item value="response">
                   <v-code-block 
                     language="json" 
                     :code="systemResponseSchema"
                   />
-                </v-tabs-window-item>
-                <v-tabs-window-item value="example">
+                </v-window-item>
+                <v-window-item value="example">
                   <v-code-block 
                     language="json" 
                     :code="systemResponseExample"
                   />
-                </v-tabs-window-item>
-              </v-tabs-window>
+                </v-window-item>
+              </v-window>
             </div>
           </v-card-text>
         </v-card>
@@ -170,26 +170,26 @@
                 <v-tab value="curl">cURL</v-tab>
               </v-tabs>
               
-              <v-tabs-window v-model="ollamaTab">
-                <v-tabs-window-item value="response">
+              <v-window v-model="ollamaTab">
+                <v-window-item value="response">
                   <v-code-block 
                     language="json" 
                     :code="ollamaResponseSchema"
                   />
-                </v-tabs-window-item>
-                <v-tabs-window-item value="example">
+                </v-window-item>
+                <v-window-item value="example">
                   <v-code-block 
                     language="json" 
                     :code="ollamaResponseExample"
                   />
-                </v-tabs-window-item>
-                <v-tabs-window-item value="curl">
+                </v-window-item>
+                <v-window-item value="curl">
                   <v-code-block 
                     language="bash" 
                     :code="ollamaCurlExample"
                   />
-                </v-tabs-window-item>
-              </v-tabs-window>
+                </v-window-item>
+              </v-window>
             </div>
 
             <!-- GET /api/v1/metrics/ollama -->

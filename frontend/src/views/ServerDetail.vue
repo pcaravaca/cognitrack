@@ -13,7 +13,7 @@
         <div class="d-flex align-center justify-space-between flex-wrap">
           <div class="d-flex align-center">
             <v-avatar :color="getStatusColor(server.status)" size="56" class="mr-4">
-              <v-icon dark size="32">{{ getStatusIcon(server.status) }}</v-icon>
+              <v-icon dark size="32" :icon="getStatusIcon(server.status)" />
             </v-avatar>
             <div>
               <div class="d-flex align-center">

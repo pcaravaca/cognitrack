@@ -29,7 +29,7 @@
                     <v-card class="feature-card" elevation="8" rounded="xl">
                       <v-card-text class="text-center pa-4">
                         <v-avatar size="50" :color="feature.color" class="mb-3">
-                          <v-icon size="28" color="white">{{ feature.icon }}</v-icon>
+                          <v-icon size="28" color="white" :icon="feature.icon" />
                         </v-avatar>
                         <p class="feature-title">{{ feature.title }}</p>
                       </v-card-text>
@@ -205,7 +205,7 @@
             <v-card class="feature-card h-100" elevation="4" hover>
               <div class="feature-icon-container">
                 <v-avatar size="80" :color="feature.color" class="white--text">
-                  <v-icon size="40">{{ feature.icon }}</v-icon>
+                  <v-icon size="40" :icon="feature.icon" />
                 </v-avatar>
               </div>
               <v-card-title class="justify-center">

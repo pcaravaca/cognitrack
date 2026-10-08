@@ -11,7 +11,7 @@
         :color="copied ? 'success' : 'default'"
         class="copy-btn"
       >
-        <v-icon>{{ copied ? 'mdi-check' : 'mdi-content-copy' }}</v-icon>
+        <v-icon :icon="copied ? 'mdi-check' : 'mdi-content-copy'" />
       </v-btn>
     </div>
     <pre class="code-content"><code :class="codeClass" v-html="highlightedCode"></code></pre>

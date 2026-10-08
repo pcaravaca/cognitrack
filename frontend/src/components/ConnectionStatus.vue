@@ -1,7 +1,7 @@
 <template>
   <v-card class="mb-4">
     <v-card-title class="d-flex align-center">
-      <v-icon :color="statusColor" class="mr-2">{{ statusIcon }}</v-icon>
+      <v-icon :color="statusColor" class="mr-2" :icon="statusIcon" />
       Estado de la conexión
       <v-spacer></v-spacer>
       <v-btn
