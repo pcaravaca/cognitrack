@@ -173,5 +173,34 @@ export const ollamaAPI = {
     api.get('/models'),
     
   getProcesses: () =>
-    api.get('/processes')
+    api.get('/processes'),
+
+  getTags: () =>
+    api.get('/tags'),
+
+  getSystemInfo: (server?: string) =>
+    api.get('/system', {
+      params: server ? { server } : undefined
+    }),
+
+  chat: (messages: any[], server?: string) =>
+    api.post('/chat', { messages, server }, {
+      params: server ? { server } : undefined
+    }),
+
+  generate: (prompt: string, server?: string) =>
+    api.post('/generate', { prompt }, {
+      params: server ? { server } : undefined
+    })
+}
+
+// Metrics API endpoints
+export const metricsAPI = {
+  getSystemMetrics: () =>
+    api.get('/metrics/system'),
+
+  getOllamaMetrics: (server?: string) =>
+    api.get('/metrics/ollama', {
+      params: server ? { server } : undefined
+    })
 }

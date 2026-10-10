@@ -22,39 +22,28 @@ export default defineConfig(({ mode }) => {
   const ollamaServerUrl = env.VITE_OLLAMA_SERVER_URL ||
     (process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:11434');
 
-  // URL del backend para proxy
-  const backendUrl = env.VITE_BACKEND_URL ||
-    (process.env.NODE_ENV === 'production' ? `http://10.10.1.185:8081` : 'http://localhost:8080');
+  // URL del backend para proxy - forzar localhost:8082 para desarrollo
+  const backendUrl = 'http://localhost:8082';
   
   // Configuración para manejar rutas de la API
-  const proxyConfig = {
-    target: backendUrl,
-    changeOrigin: true,
-    secure: false,
-    ws: true,
-    // No reescribir la ruta, enviar /api/v1/... al backend como está
-    rewrite: (path: string) => path,
-    configure: (proxy: any, _options: any) => {
-      proxy.on('error', (err: Error) => console.error('Error en el proxy:', err));
-      proxy.on('proxyReq', (proxyReq: any, req: any) => {
-        console.log(`[PROXY] ${req.method} ${req.url} -> ${proxyReq.path}`);
-      });
-    }
-  };
+    // El frontend usa baseURL: '/api/v1' y llama a '/api/v1/auth/login'
+    // El proxy debe reescribir '/api/v1/...' -> '/api/v1/...' (pasar directamente al backend)
+    const proxyConfig = {
+      target: backendUrl,
+      changeOrigin: true,
+      secure: false,
+      ws: true,
+      // No reescribir, pasar las rutas directamente al backend
+      rewrite: (path: string) => path,
+      configure: (proxy: any, _options: any) => {
+        proxy.on('error', (err: Error) => console.error('Error en el proxy:', err));
+        proxy.on('proxyReq', (proxyReq: any, req: any) => {
+          console.log(`[PROXY] ${req.method} ${req.url} -> ${proxyReq.path}`);
+        });
+      }
+    };
 
-  // Configuración para manejar rutas de la API v1
-  const v1ProxyConfig = {
-    target: backendUrl,
-    changeOrigin: true,
-    secure: false,
-    rewrite: (path: string) => `/api${path}`,
-    configure: (proxy: any, _options: any) => {
-      proxy.on('error', (err: Error) => console.error('Error en el proxy (v1):', err));
-      proxy.on('proxyReq', (proxyReq: any, req: any) => {
-        console.log(`[PROXY] ${req.method} ${req.url} -> ${proxyReq.path}`);
-      });
-    }
-  };
+  
   
   return {
     base,
@@ -90,16 +79,14 @@ export default defineConfig(({ mode }) => {
         usePolling: true
       },
       proxy: {
-        '/api': proxyConfig,
-        '/v1': v1ProxyConfig
+        '/api': proxyConfig
       }
     },
     preview: {
       port: 5173,
       open: false,
       proxy: {
-        '/api': proxyConfig,
-        '/v1': v1ProxyConfig
+        '/api': proxyConfig
       }
     },
     build: {

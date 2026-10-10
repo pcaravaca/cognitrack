@@ -178,7 +178,7 @@ func main() {
 	// Configuración inicial
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8081"
+		port = "8082"
 	}
 
 	log.Printf("🚀 [INIT] Iniciando CogniTrack Backend v2.0.0-go")
@@ -229,17 +229,26 @@ func main() {
 	// Descubrimiento de servidores
 	proxy.HandleFunc("/discover", discoverServersHandler).Methods("GET")
 
-	// Rutas de Ollama
-	ollama := api.PathPrefix("/v1/ollama").Subrouter()
+	// Rutas de Ollama - endpoint para compatibilidad con frontend
+	// Estas rutas se acceden directamente via /api/ollama/*
+	ollamaDirect := api.PathPrefix("/ollama").Subrouter()
+	ollamaDirect.HandleFunc("/chat", chatWithOllama).Methods("POST")
+
+	// Rutas de Ollama v1
+	ollamaV1 := api.PathPrefix("/v1/ollama").Subrouter()
 
 	// Obtener tags de modelos
-	ollama.HandleFunc("/tags", getOllamaTags).Methods("GET")
+	ollamaV1.HandleFunc("/tags", getOllamaTags).Methods("GET")
 
 	// Obtener estadísticas del sistema de Ollama
-	ollama.HandleFunc("/system", getOllamaSystemInfo).Methods("GET")
+	ollamaV1.HandleFunc("/system", getOllamaSystemInfo).Methods("GET")
 
 	// Generar con Ollama (proxy)
-	ollama.HandleFunc("/generate", generateWithOllama).Methods("POST")
+	ollamaV1.HandleFunc("/generate", generateWithOllama).Methods("POST")
+
+	// Rutas de métricas
+	api.HandleFunc("/v1/metrics/system", metricsSystemHandler).Methods("GET")
+	api.HandleFunc("/v1/metrics/ollama", metricsOllamaHandler).Methods("GET")
 
 	// Ruta raíz con información detallada
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -711,6 +720,111 @@ func generateWithOllama(w http.ResponseWriter, r *http.Request) {
 	log.Printf("✅ [OLLAMA] Generación completada con servidor %s", serverParam)
 }
 
+// chatWithOllama maneja las peticiones de chat al estilo Ollama
+// Este endpoint es consumido por ModelChatDialog.vue
+// Si Ollama no está disponible, devuelve una respuesta simulada
+func chatWithOllama(w http.ResponseWriter, r *http.Request) {
+	log.Printf("🔍 [OLLAMA] Chat desde %s", r.RemoteAddr)
+
+	// Obtener el servidor de la query string
+	serverParam := r.URL.Query().Get("server")
+	if serverParam == "" {
+		serverParam = "localhost:11434" // valor por defecto
+	}
+
+	// Construir URL del servidor Ollama (endpoint /api/chat para conversaciones)
+	ollamaURL := fmt.Sprintf("http://%s/api/chat", serverParam)
+
+	log.Printf("🔍 [OLLAMA] Enviando request a: %s", ollamaURL)
+
+	// Leer el cuerpo de la solicitud
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Printf("❌ [OLLAMA] Error leyendo body: %v", err)
+		http.Error(w, "Error leyendo solicitud", http.StatusBadRequest)
+		return
+	}
+
+	// Crear request al servidor Ollama
+	req, err := http.NewRequest(r.Method, ollamaURL, strings.NewReader(string(body)))
+	if err != nil {
+		log.Printf("❌ [OLLAMA] Error creando request: %v", err)
+		http.Error(w, "Error creando request", http.StatusInternalServerError)
+		return
+	}
+
+	// Copiar headers
+	for key, values := range r.Header {
+		for _, value := range values {
+			req.Header.Add(key, value)
+		}
+	}
+
+	// Ejecutar request con timeout
+	client := &http.Client{Timeout: 5 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("❌ [OLLAMA] Error ejecutando request: %v", err)
+		// Ollama no está disponible - devolver respuesta simulada
+		log.Printf("⚠️  Ollama no disponible, devolviendo respuesta simulada")
+		simulatedResponse := map[string]interface{}{
+			"model":  "simulated-model",
+			"created_at": time.Now().Format(time.RFC3339),
+			"message": map[string]string{
+				"role": "assistant",
+				"content": "Modo offline: Ollama no está disponible en este momento. Conéctate a un servidor Ollama o asegúrate de que el servicio esté corriendo.",
+			},
+			"done": true,
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(simulatedResponse)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Si la respuesta no fue exitosa, también devolver respuesta simulada
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("❌ [OLLAMA] Respuesta no exitosa: %s", resp.Status)
+		simulatedResponse := map[string]interface{}{
+			"model":  "simulated-model",
+			"created_at": time.Now().Format(time.RFC3339),
+			"message": map[string]string{
+				"role": "assistant", 
+				"content": fmt.Sprintf("Error al comunicarse con Ollama (status: %d). Asegúrate de que el servidor esté corriendo y el modelo exista.", resp.StatusCode),
+			},
+			"done": true,
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(simulatedResponse)
+		return
+	}
+
+	// Copiar headers de respuesta
+	for key, values := range resp.Header {
+		for _, value := range values {
+			w.Header().Add(key, value)
+		}
+	}
+
+	// Establecer status code
+	w.WriteHeader(resp.StatusCode)
+
+	// Copiar body
+	responseBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("❌ [OLLAMA] Error leyendo respuesta: %v", err)
+		http.Error(w, "Error leyendo respuesta del servidor", http.StatusInternalServerError)
+		return
+	}
+
+	// Responder con los datos del servidor Ollama
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(responseBody)
+
+	log.Printf("✅ [OLLAMA] Chat completado con servidor %s", serverParam)
+}
+
 func getKnownOllamaServers() []map[string]interface{} {
 	log.Printf("🔍 [DISCOVERY] Usando lista de servidores conocidos")
 
@@ -851,4 +965,114 @@ func getOllamaSystemInfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("✅ [RESPONSE] Estadísticas del sistema simuladas correctamente para %s", server)
+}
+
+// metricsSystemHandler maneja las peticiones para métricas del sistema
+func metricsSystemHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("📊 [METRICS] Solicitando métricas del sistema desde %s", r.RemoteAddr)
+
+	var mem runtime.MemStats
+	runtime.ReadMemStats(&mem)
+
+	metrics := map[string]interface{}{
+		"cpu": map[string]interface{}{
+			"usage":    float64(mem.Alloc/1024) / 1024, // Aproximado en MB
+			"cores":    runtime.NumCPU(),
+		},
+		"memory": map[string]interface{}{
+			"used":       mem.Alloc,
+			"total":      mem.Sys,
+			"percentage": float64(mem.Alloc) / float64(mem.Sys) * 100,
+		},
+		"disk": map[string]interface{}{
+			"used":       0,
+			"total":      0,
+			"percentage": 0,
+		},
+		"timestamp": time.Now().Format(time.RFC3339),
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	w.Header().Set("Pragma", "no-cache")
+	w.Header().Set("Expires", "0")
+
+	if err := json.NewEncoder(w).Encode(metrics); err != nil {
+		log.Printf("❌ [ERROR] Error codificando respuesta de métricas: %v", err)
+		http.Error(w, "Error al procesar la solicitud", http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("✅ [RESPONSE] Métricas del sistema enviadas correctamente")
+}
+
+// metricsOllamaHandler maneja las peticiones para métricas de Ollama
+func metricsOllamaHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("📊 [METRICS] Solicitando métricas de Ollama desde %s", r.RemoteAddr)
+
+	// Obtener el servidor por defecto
+	server := r.URL.Query().Get("server")
+	if server == "" {
+		server = "localhost:11434"
+	}
+
+	// Construir URL del endpoint de stats de Ollama
+	ollamaURL := fmt.Sprintf("http://%s/api/ps", server)
+
+	client := &http.Client{Timeout: 3 * time.Second}
+	resp, err := client.Get(ollamaURL)
+
+	if err != nil {
+		log.Printf("⚠️  Error conectando a Ollama en %s: %v", server, err)
+		// Devolver respuesta vacía pero válida
+		metrics := map[string]interface{}{
+			"server":           server,
+			"status":           "offline",
+			"models":           []map[string]interface{}{},
+			"total_memory_usage": 0,
+			"uptime":           0,
+			"timestamp":        time.Now().Format(time.RFC3339),
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(metrics)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Leer respuesta de Ollama
+	var ollamaResp struct {
+		Models []map[string]interface{} `json:"models"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&ollamaResp); err != nil {
+		log.Printf("⚠️  Error parseando respuesta de Ollama: %v", err)
+		http.Error(w, "Error parseando respuesta", http.StatusInternalServerError)
+		return
+	}
+
+	// Calcular métricas
+	totalModelSize := 0
+	for _, model := range ollamaResp.Models {
+		if size, ok := model["size"].(float64); ok {
+			totalModelSize += int(size)
+		}
+	}
+
+	metrics := map[string]interface{}{
+		"server":              server,
+		"status":              "online",
+		"models":              ollamaResp.Models,
+		"total_memory_usage":  totalModelSize,
+		"uptime":              0,
+		"timestamp":           time.Now().Format(time.RFC3339),
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	w.Header().Set("Pragma", "no-cache")
+	w.Header().Set("Expires", "0")
+
+	log.Printf("✅ [RESPONSE] Métricas de Ollama enviadas correctamente - %d modelos", len(ollamaResp.Models))
+	json.NewEncoder(w).Encode(metrics)
 }

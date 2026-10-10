@@ -13,10 +13,10 @@
                     <v-icon size="80" color="white">mdi-brain</v-icon>
                   </v-avatar>
                 </div>
-                <h1 class="hero-title font-weight-black mt-6">
+                <h1 class="hero-title font-weight-black mt-6" style="font-size: 2rem !important; line-height: 1.2; margin-bottom: 0.5rem;">
                   CogniTrack
                 </h1>
-                <p class="hero-subtitle mt-4">
+                <p class="hero-subtitle mt-4" style="font-size: 1rem !important; opacity: 0.9;">
                   {{ $t('landing.subtitle') }}
                 </p>
               </div>

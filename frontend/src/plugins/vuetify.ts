@@ -3,7 +3,7 @@ import { createVuetify } from 'vuetify'
 import type { ThemeDefinition } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-import { aliases, mdi } from 'vuetify/iconsets/mdi'
+import { aliases, md as mdi } from 'vuetify/lib/iconsets/md'
 import { VDataTable } from 'vuetify/labs/VDataTable'
 
 // Definición del tema claro

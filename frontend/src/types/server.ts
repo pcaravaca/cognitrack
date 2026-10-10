@@ -9,28 +9,13 @@ export interface Server {
   error?: string
   isConnecting?: boolean
   stats?: ServerStats
-  models?: Array<{
-    name: string
-    size: number
-    modified: string
-  }>
+  models?: ModelInfo[]
   version?: string
   uptime?: string
   cpu?: number
   memory?: number
   disk?: number
-  network?: {
-    bytesSent: number
-    bytesReceived: number
-    in?: number
-    out?: number
-    out: number
-    connections: number
-  }
-  models: any[]
-  version: string
-  uptime: string
-  lastBackup: string
+  network?: ServerNetwork
   description?: string
   location?: string
   os?: string
@@ -40,6 +25,48 @@ export interface Server {
   isDefault?: boolean
   createdAt: string
   updatedAt: string
+}
+
+export interface ModelInfo {
+  name: string
+  size: number
+  modified: string
+}
+
+export interface ServerNetwork {
+  bytesSent?: number
+  bytesReceived?: number
+  in?: number
+  out: number
+  connections: number
+}
+
+export interface ServerStats {
+  cpu: {
+    cores: number
+    model: string
+    usage: number
+    temperature?: number
+  }
+  memory: {
+    total: number
+    used: number
+    free: number
+    usage: number
+  }
+  disk: {
+    total: number
+    used: number
+    free: number
+    usage: number
+  }
+  network: {
+    in: number
+    out: number
+    connections: number
+  }
+  version: string
+  status: string
 }
 
 export interface ServerAlert {
