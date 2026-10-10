@@ -66,10 +66,12 @@
             <div class="hero-animation">
               <div class="monitoring-dashboard-preview">
                 <v-card class="preview-card elevation-12" outlined style="margin: 0; padding: 0;">
-                  <v-card-title class="justify-center">
-                    <v-icon left color="success">mdi-monitor-dashboard</v-icon>
-                    Dashboard Preview
-                  </v-card-title>
+                  <v-card-title class="preview-card-title justify-center pa-2">
+                  <div class="preview-title-row">
+                    <v-icon color="success" class="mr-2">mdi-monitor-dashboard</v-icon>
+                    <span>Dashboard Preview</span>
+                  </div>
+                </v-card-title>
                   <v-card-text style="padding: 24px;">
                     <div class="metrics-preview">
                       <div class="metric-item" v-for="metric in previewMetrics" :key="metric.label">
@@ -79,9 +81,9 @@
                           size="60"
                           width="6"
                         >
-                          <span class="caption">{{ metric.value }}%</span>
+                          <div class="progress-value">{{ metric.value }}%</div>
                         </v-progress-circular>
-                        <p class="caption mt-1">{{ metric.label }}</p>
+                        <p class="caption metric-label">{{ metric.label }}</p>
                       </div>
                     </div>
                   </v-card-text>
@@ -498,18 +500,18 @@ methods: {
 }
 
 .hero-title {
-  font-size: 3.5rem;
+  font-size: 2.8rem;
   font-weight: 700;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .hero-subtitle {
-  font-size: 1.4rem;
+  font-size: 1.1rem;
   font-weight: 300;
-  margin-bottom: 48px;
+  margin-bottom: 32px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 .features-grid {
@@ -534,6 +536,15 @@ methods: {
     background: rgba(0, 0, 0, 0.4) !important;
     border-color: rgba(255, 255, 255, 0.2);
   }
+}
+
+/* Feature card mini-titles */
+.feature-title {
+  font-size: 1.1rem !important;
+  font-weight: 600;
+  margin: 0 !important;
+  line-height: 1.3;
+  color: white;
 }
 
 .login-btn:hover {
@@ -585,15 +596,59 @@ methods: {
   max-width: 500px;
 }
 
+.preview-card-title {
+  background: rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 8px;
+}
+
+.preview-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .metrics-preview {
   display: flex;
-  justify-content: space-around;
+  flex-direction: column;
   align-items: center;
-  padding: 1rem 0;
+  gap: 1.5rem;
+  padding: 1.5rem 0;
 }
 
 .metric-item {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.progress-value {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #333;
+  user-select: none;
+}
+
+.metric-label {
+  font-weight: 500;
+  color: #666;
+  user-select: none;
+}
+
+/* Align progress circular items horizontally on larger screens */
+@media (min-width: 960px) {
+  .metrics-preview {
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+  }
+  
+  .metric-item {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+  }
 }
 
 .background-animation {
