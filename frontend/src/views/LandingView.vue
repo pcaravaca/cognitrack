@@ -10,7 +10,7 @@
               <div class="brand-logo mb-12">
                 <div class="logo-icon-wrapper">
                   <v-avatar size="140" class="elevation-12 logo-avatar">
-                    <v-icon size="80" color="white">mdi-brain</v-icon>
+                    <v-icon size="56" color="white">mdi-brain</v-icon>
                   </v-avatar>
                 </div>
                 <h1 class="hero-title font-weight-black mt-6" style="font-size: 2rem !important; line-height: 1.2; margin-bottom: 0.5rem;">
@@ -500,18 +500,24 @@ methods: {
 }
 
 .hero-title {
-  font-size: 2.8rem;
-  font-weight: 700;
-  margin-bottom: 16px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  font-size: 2rem !important;
+  font-size: 32px !important;
+  font-weight: 700 !important;
+  margin-bottom: 16px !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+  line-height: 1.2 !important;
+  padding: 0 !important;
 }
 
 .hero-subtitle {
-  font-size: 1.1rem;
-  font-weight: 300;
-  margin-bottom: 32px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-  line-height: 1.5;
+  font-size: 1rem !important;
+  font-size: 16px !important;
+  font-weight: 300 !important;
+  margin-bottom: 32px !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3) !important;
+  line-height: 1.5 !important;
+  opacity: 0.9 !important;
+  padding: 0 !important;
 }
 
 .features-grid {
@@ -749,6 +755,19 @@ methods: {
   100% {
     transform: translateY(-100px) rotate(360deg);
   }
+}
+
+/* Fix: Force hero avatar to 56px instead of 140px */
+.logo-avatar {
+  width: 56px !important;
+  height: 56px !important;
+  font-size: 56px !important;
+}
+
+.logo-avatar .v-icon {
+  font-size: 32px !important;
+  width: 32px !important;
+  height: 32px !important;
 }
 
 /* Media queries */

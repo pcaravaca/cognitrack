@@ -14,6 +14,7 @@ import './style.css'
 // 3. Estilos globales personalizados (si existen)
 import '@/assets/styles/global.scss'
 import '@/assets/styles/main.scss'
+import '@/styles/landing.scss'
 
 // 5. Vue i18n para traducción
 import { createI18n } from 'vue-i18n'

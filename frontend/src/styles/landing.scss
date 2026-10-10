@@ -89,6 +89,20 @@
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
+/* Fix: Force exact icon size inside hero avatar */
+.logo-avatar .v-icon {
+  font-size: 56px !important;
+  width: 56px !important;
+  height: 56px !important;
+}
+
+/* Force the avatar container to 56px instead of 140px */
+.logo-avatar {
+  width: 56px !important;
+  height: 56px !important;
+  font-size: 56px !important;
+}
+
 .cta-section {
   text-align: center;
   padding: 80px 20px;
